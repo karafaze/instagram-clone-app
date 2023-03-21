@@ -1,0 +1,9 @@
+@import "../../sass/main";
+
+.form{
+    @include flexcolumn-center;
+    padding: 1.5em;
+    border: 1px solid #283C63;
+    gap: 1em;
+    width: 85%;
+}

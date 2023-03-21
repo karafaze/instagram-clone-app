@@ -1,2 +1,44 @@
 @import "../../sass/main";
 
+.site-name{
+    font-family: $font-title;
+    text-align: center;
+    font-size: 3.5em;
+    margin-bottom: .1em;
+}
+
+.site-slogan{
+    font-family: $font-sub-title;
+    text-align: center;
+    font-style: italic;
+    font-size: 1.1em;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.login-wrapper{
+    @include flexcolumn-center;
+    position: relative;
+    gap: 1em;
+    width: 100%;
+}
+
+.login-logo{
+    font-size: 7em;
+    transform: translateY(.453em);
+}
+
+.signup-link{
+    @include flexrow-center;
+    gap: .5em;
+    padding: 1em;
+    border: 1px solid #283C63;
+    width: 85%;
+}
+
+.signup-link > a{
+    text-decoration: none;
+    color: #283C63;
+    font-weight: 700;
+    cursor: pointer;
+}

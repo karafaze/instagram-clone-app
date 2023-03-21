@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
@@ -11,6 +11,7 @@ import UserProfile from "./views/userprofile/UserProfile";
 import "./app.scss";
 
 export default function App() {
+    const [user, setUser] = useState(null);
     // const [user, setUser] = useState(null);
     // useEffect(() => {
     //     fetch("http://localhost:3001/")
@@ -26,9 +27,12 @@ export default function App() {
         <React.Fragment>
             <Header />
             <Routes>
-                <Route path='/login' element={<Login/>}/>
-                <Route path='/register' element={<Register/>}/>
-                <Route path='/' element={<UserProfile/>}/>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/"
+                    element={user ? <UserProfile /> : <Navigate to="/login"/>}
+                />
             </Routes>
             <Footer />
         </React.Fragment>
