@@ -1,5 +1,9 @@
 @import "../../sass/main";
 
+.login-page-wrapper{
+    @include flexcolumn-center;
+}
+
 .site-name{
     font-family: $font-title;
     text-align: center;
@@ -26,6 +30,26 @@
 .login-logo{
     font-size: 7em;
     transform: translateY(.453em);
+}
+
+.form{
+    @include flexcolumn-center;
+    padding: 1.5em;
+    border: 1px solid #283C63;
+    gap: 1em;
+    width: 85%;
+    &--btn{
+        font-family: $font-text;
+        font-size: 1.1em;
+        width: 100%;
+        background-color: #283C63;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: .4em 0;
+        width: 95%;
+        cursor: pointer;
+    }
 }
 
 .signup-link{

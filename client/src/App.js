@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Header from "./components/header/Header";
-import Footer from "./components/footer/Footer";
 import Login from "./views/login/Login";
 import Register from "./views/register/Register";
 import UserProfile from "./views/userprofile/UserProfile";
@@ -25,7 +23,6 @@ export default function App() {
 
     return (
         <React.Fragment>
-            <Header />
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -34,7 +31,6 @@ export default function App() {
                     element={user ? <UserProfile /> : <Navigate to="/login"/>}
                 />
             </Routes>
-            <Footer />
         </React.Fragment>
     );
 }
