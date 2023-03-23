@@ -9,7 +9,7 @@ import UserProfile from "./views/userprofile/UserProfile";
 import "./app.scss";
 
 export default function App() {
-    const [user, setUser] = useState(null);
+    const [user] = useState(null);
     // const [user, setUser] = useState(null);
     // useEffect(() => {
     //     fetch("http://localhost:3001/")

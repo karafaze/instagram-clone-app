@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/forminput/FormInput";
 
@@ -8,7 +8,7 @@ export default function Register() {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
-        passwordConfirm: ""
+        passwordConfirm: "",
     });
 
     const handleChange = (e) => {
@@ -23,7 +23,20 @@ export default function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
+        fetch("/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+                username: formData.username,
+                password: formData.password,
+                passwordConfirm: formData.passwordConfirm,
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .catch((err) => console.log(err));
     };
     return (
         <main>
