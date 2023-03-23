@@ -7,6 +7,7 @@ import "./register.scss";
 export default function Register() {
     const [formData, setFormData] = useState({
         username: "",
+        email: "",
         password: "",
         passwordConfirm: "",
     });
@@ -30,6 +31,7 @@ export default function Register() {
             },
             body: JSON.stringify({
                 username: formData.username,
+                email: formData.email,
                 password: formData.password,
                 passwordConfirm: formData.passwordConfirm,
             }),
@@ -56,6 +58,16 @@ export default function Register() {
                             placeholder: "Username",
                             name: "username",
                             value: formData.username,
+                            onChange: handleChange,
+                        }}
+                    />
+                    <FormInput
+                        attr={{
+                            id: "email",
+                            type: "text",
+                            placeholder: "Email",
+                            name: "email",
+                            value: formData.email,
                             onChange: handleChange,
                         }}
                     />

@@ -1,13 +1,78 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/auth");
+
 exports.login = (req, res) => {
-    console.log("inside the login controller");
-    res.status(200).json({
-        status: "OK",
-    });
+    // we first check in the database if the user already exists
+    User.findOne({ username: req.body.username })
+        .then((user) => {
+            if (!user) {
+                // if he does not exists, we return 400 status code
+                // with custom message
+                return res.status(400).json({
+                    status: "FAILED",
+                    error: "Oops, this user is not registered on this platform.",
+                });
+            }
+            // else if user exists we now check for a password match with bcrypt
+            bcrypt.compare(req.body.password, user.password).then((data) => {
+                if (!data) {
+                    return res.status(400).json({
+                        status: "FAILED",
+                        error: "Oops, the password is not correct.",
+                    });
+                }
+                // if passwords math, we create a token using JWT
+                const token = jwt.sign(
+                    { userId: user._id },
+                    process.env.ACCESS_TOKEN,
+                    { expiresIn: "24h" }
+                );
+                // we return a 200 status code with an object containing
+                // the userId and its token
+                return res.status(200).json({
+                    status: "OK",
+                    user: user._id,
+                    token: token,
+                });
+            });
+        })
+        .catch((err) => {
+            return res.status(500).json({
+                status: "FAILED",
+                error: err,
+            });
+        });
 };
 
 exports.register = (req, res) => {
-    console.log("inside the register controller");
-    res.status(200).json({
-        status: "OK",
-    });
+    // retrieve inputs from req.body
+    const { username, email, password } = req.body;
+    const saltRounds = 10;
+    bcrypt
+        // hash the password using bcrypt
+        .hash(password, saltRounds)
+        .then((hashedPassword) => {
+            // if ok, we create the user and store
+            // username, email, hashedpassword
+            const user = new User({
+                username: username,
+                email: email,
+                password: hashedPassword,
+            });
+            user.save().then(() => {
+                return res.status(201).json({
+                    status: "OK",
+                    data: {
+                        message: `New user ${username} created`,
+                    },
+                });
+            });
+        })
+        .catch((err) => {
+            return res.status(500).json({
+                status: "FAILED",
+                error: err.message,
+            });
+        });
 };
