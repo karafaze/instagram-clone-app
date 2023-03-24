@@ -11,6 +11,7 @@ exports.login = (req, res) => {
                 // with custom message
                 return res.status(400).json({
                     status: "FAILED",
+                    field: 'username',
                     error: "Oops, this user is not registered on this platform.",
                 });
             }
@@ -19,6 +20,7 @@ exports.login = (req, res) => {
                 if (!data) {
                     return res.status(400).json({
                         status: "FAILED",
+                        field: 'password',
                         error: "Oops, the password is not correct.",
                     });
                 }
@@ -40,6 +42,7 @@ exports.login = (req, res) => {
         .catch((err) => {
             return res.status(500).json({
                 status: "FAILED",
+                field: 'internal',
                 error: err,
             });
         });

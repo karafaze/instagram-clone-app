@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/forminput/FormInput";
 
@@ -10,6 +10,8 @@ export default function Login() {
         password: "",
     });
 
+    const [formError, setFormError] = useState({})
+    
     const handleChange = (e) => {
         const { value, name } = e.target;
         setFormData((prevForm) => {
@@ -19,6 +21,24 @@ export default function Login() {
             };
         });
     };
+
+    useEffect(() => {
+        // this function's objective is to manage the formError display
+        // if we get an error back from the server and display a message
+        // we want to delete the message once the user is typing something else
+
+        // check if formError is not empty
+        if (Object.keys(formError).length > 0){
+            // if not empty we retrieve the key that contains the error
+            const key = Object.keys(formError)[0]
+            // now we compare the length of the key with its equal in formData
+            // if they are not the same, we know the user is typing something else
+            // so we setFormError back to an empty object
+            if (formData[key].length !== formError.length){
+                setFormError({})
+            }
+        }
+    }, [formData])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -33,8 +53,15 @@ export default function Login() {
             }),
         })
             .then((res) => res.json())
-            .then((result) => {
-                console.log(result);
+            .then((data) => {
+                if (data.status === 'FAILED'){
+                    setFormError({
+                        [data.field]: data.error,
+                        length: formData[data.field].length
+                    })
+                } else {
+                    console.log('Welcome back.')
+                }
             })
             .catch((err) => console.log(err));
     };
@@ -58,6 +85,7 @@ export default function Login() {
                             name: "username",
                             value: formData.username,
                             onChange: handleChange,
+                            errors: checkErrorInForm(formError, 'username')
                         }}
                     />
                     <FormInput
@@ -68,6 +96,7 @@ export default function Login() {
                             name: "password",
                             value: formData.password,
                             onChange: handleChange,
+                            errors: checkErrorInForm(formError, 'password')
                         }}
                     />
                     <button className="form--btn">Log In</button>
@@ -79,4 +108,8 @@ export default function Login() {
             </section>
         </main>
     );
+}
+
+function checkErrorInForm(formError, field){
+    return formError[field] || null
 }

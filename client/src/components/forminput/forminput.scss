@@ -1,11 +1,20 @@
 @import "../../sass/main";
 
 .form--field{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 95%;
+    @include flexcolumn-center;
+    width: 100%;
+    gap: .2em;
+    &__error{
+        width: 95%;
+        font-size: .8em;
+    }
+    &__wrapper{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 95%;
+    }
     &__label{
         font-size: 1.3em;
         border: 2px solid #283C63;
@@ -27,5 +36,8 @@
         padding: .49em 0 .49em .5em;
         border-radius: 0 5px 5px 0;
         width: 100%;
+    }
+    &__input-error{
+        border: 1px solid red;
     }
 }
