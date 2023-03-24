@@ -12,6 +12,13 @@ export default function Login() {
 
     const [formError, setFormError] = useState({})
     
+    useEffect(() => {
+        // this function's objective is to manage the formError display
+        // if we get an error back from the server and display a message
+        // we want to delete the message once the user is typing something else
+        setFormError(updateCurrentFormError(formError, formData))
+    }, [formData, formError])
+
     const handleChange = (e) => {
         const { value, name } = e.target;
         setFormData((prevForm) => {
@@ -21,24 +28,6 @@ export default function Login() {
             };
         });
     };
-
-    useEffect(() => {
-        // this function's objective is to manage the formError display
-        // if we get an error back from the server and display a message
-        // we want to delete the message once the user is typing something else
-
-        // check if formError is not empty
-        if (Object.keys(formError).length > 0){
-            // if not empty we retrieve the key that contains the error
-            const key = Object.keys(formError)[0]
-            // now we compare the length of the key with its equal in formData
-            // if they are not the same, we know the user is typing something else
-            // so we setFormError back to an empty object
-            if (formData[key].length !== formError.length){
-                setFormError({})
-            }
-        }
-    }, [formData])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -56,6 +45,10 @@ export default function Login() {
             .then((data) => {
                 if (data.status === 'FAILED'){
                     setFormError({
+                        // formError will be an object with the shape:
+                        // { errorName: errorMessage, length: length of the input in formData }
+                        // we want to get the length of the input that was inserted so we can compare it 
+                        // and modify the formError if the user types something else
                         [data.field]: data.error,
                         length: formData[data.field].length
                     })
@@ -111,5 +104,25 @@ export default function Login() {
 }
 
 function checkErrorInForm(formError, field){
+    // function to be used to send error message to FormInput.js
+    // we simply want to return either the errorMessage
+    // or null
     return formError[field] || null
+}
+
+function updateCurrentFormError(formError, formData){
+    const errorInForm = Object.keys(formError)
+    // check if formError is not empty
+    if (errorInForm.length > 0){
+        // if not empty we retrieve the key that contains the error
+        const key = errorInForm[0]
+        // now we compare the length of the key with its equal in formData
+        // if they are not the same, we know the user is typing something else
+        // so we return an empty object to reset formError
+        if (formData[key].length !== formError.length){
+            return {}
+        }
+        return formError
+    }
+    return formError
 }

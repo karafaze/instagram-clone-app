@@ -16,34 +16,10 @@ export default function Register() {
 
     useEffect(() => {
         // this function's objective is the same as in Login.js but different in 
-        // its implementation since formError contains more than 1 key. 
+        // its implementation since formError may contains more than 1 error. 
+        setFormError(updateCurrentFormError(formError, formData))
+    }, [formData])
 
-        // we first get a list of the keys in formError
-        let keyList = Object.keys(formError)
-        if (keyList.length > 0){
-            // if it contains at least one error
-            // we update the key list to keep only the inputs that didn't change
-            // by comparing their length
-            keyList = keyList.filter(key => formData[key].length === formError[key].length)
-
-            // now that the list has been updated, we create a copy of formError
-            let formErrorCopy = {...formError}
-            // we iterate over the key of this object
-            for (let key of Object.keys(formErrorCopy)){
-                // if the keys is not in the keyList from above
-                // it means the user has typed something else 
-                if (!keyList.includes(key)){
-                    // we delete that key and its value from the errorFormCopy
-                    delete formErrorCopy[key]
-                }
-            }
-            // now we have an object that contains only errors that 
-            // haven't been modified since the user sent the form 
-            // and received intel from the server
-            setFormError(formErrorCopy)
-        }
-    }, [ formData])
-    
     const handleChange = (e) => {
         const { value, name } = e.target;
         setFormData((prevForm) => {
@@ -71,20 +47,14 @@ export default function Register() {
             .then((res) => res.json())
             .then((data) => {
                 if (data.errors){
-                    const updatedFormError = {}
-                    for (let errorObject of data.errors){
-                        const inputErrorName = errorObject.param;
-                        const newFormError = {
-                            message: errorObject.msg,
-                            length: formData[inputErrorName].length
-                        }
-                        updatedFormError[inputErrorName] = newFormError
-                    }
-                    setFormError(updatedFormError)
+                    // data.errors is an Array of error objects from the server
+                    // we set formError using a function that format this data.errors Array
+                    setFormError(formatErrorsToFormError(data.errors, formData))
                 }
             })
             .catch((err) => console.log(err));
     };
+
     return (
         <main>
             <h1 className="site-name">PhotoWall</h1>
@@ -152,8 +122,63 @@ export default function Register() {
 }
 
 function checkErrorInForm(formError, field){
-    if (formError[field]){
-        return formError[field].message
+    // function to be used to send error message to FormInput.js
+    // we simply want to return either the errorMessage
+    // or null
+    return formError[field]?.message || null
+}
+
+function formatErrorsToFormError(errorsArray, currentFormData){
+    // we initialize an empty objects that will contain
+    // our new formError
+    // its shape will be an object with nested object within : 
+    // { 
+        // errorInputName1: {message: errorMessage, length: length of the input in formData},
+        // errorInputName2: {...},
+    //  }
+    let formError = {};
+    // we first iterate over the array of errors
+    for (let errorObject of errorsArray){
+        // retrieve the input name that contain the error
+        const inputErrorName = errorObject.param
+        // and create a new formatted error object 
+        const updatedFormError = {
+            message: errorObject.msg,
+            length: currentFormData[inputErrorName].length
+        }
+        // and we add this new error to our formError object
+        formError[inputErrorName] = updatedFormError
     }
-    return null
+    // after iteration, we have a fully new formError object that we return
+    return formError;
+}
+
+function updateCurrentFormError(formError, formData){
+    // we first create of copy of formError 
+    let formErrorCopy = {...formError}
+    // we first get a list of the keys in formError
+    let keyList = Object.keys(formErrorCopy)
+    if (keyList.length > 0){
+        // if it contains at least one error
+        // we update the key list to keep only the inputs that didn't change
+        // by comparing their length
+        // if the length has changed, it means the user has typed something else
+        keyList = keyList.filter(key => formData[key].length === formError[key].length)
+
+        // now that the list has been updated 
+        // we iterate over the key of formErrorCopy
+        for (let key of Object.keys(formErrorCopy)){
+            // for each key
+            // if the key is not in the keyList from above
+            if (!keyList.includes(key)){
+                // we delete that key and its value from the errorFormCopy
+                delete formErrorCopy[key]
+            }
+        }
+        // now we have an object that contains only errors that 
+        // haven't been modified since the user sent the form 
+        // and received intel from the server
+        return formErrorCopy;
+    }
+    return formError;
 }
