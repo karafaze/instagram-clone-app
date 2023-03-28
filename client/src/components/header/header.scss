@@ -1,0 +1,28 @@
+@import '../../sass/main';
+
+.navbar {
+    @include flexrow-center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5em;
+    gap: 1em;
+    position: fixed;
+    background-color: #fff;
+    &--title {
+        text-decoration: none;
+        color: #000;
+        font-family: $font-title;
+        margin: 0;
+        font-size: 1.4em;
+    }
+    &--link {
+        @include flexrow-center;
+        gap: 1em;
+        &__single {
+            text-decoration: none;
+            color: #000;
+            font-size: 1.5em;
+            @include flexcenter;
+        }
+    }
+}

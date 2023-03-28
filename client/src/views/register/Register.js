@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormInput from "../../components/forminput/FormInput";
 
 import "./register.scss";
 
 export default function Register() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -50,6 +51,9 @@ export default function Register() {
                     // data.errors is an Array of error objects from the server
                     // we set formError using a function that format this data.errors Array
                     setFormError(formatErrorsToFormError(data.errors, formData))
+                }
+                if (data.status === 'OK'){
+                    navigate(`/photowall/${formData.username}`)
                 }
             })
             .catch((err) => console.log(err));

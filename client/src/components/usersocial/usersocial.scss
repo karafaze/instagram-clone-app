@@ -1,0 +1,14 @@
+@import "../../sass/main";
+
+.stats--single {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    & > span {
+        font-weight: 700;
+    }
+    & > p {
+        font-size: 0.9em;
+    }
+}

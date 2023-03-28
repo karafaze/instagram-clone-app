@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormInput from "../../components/forminput/FormInput";
 
 import "./login.scss";
 
 export default function Login() {
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -52,8 +53,14 @@ export default function Login() {
                         [data.field]: data.error,
                         length: formData[data.field].length
                     })
-                } else {
-                    console.log('Welcome back.')
+                } 
+                if (data.status === 'OK'){
+                    const userData = {
+                        userId: data.userId,
+                        token: data.token
+                    }
+                    localStorage.setItem('photowall-user', JSON.stringify(userData))
+                    navigate(`/photowall/${formData.username}`)
                 }
             })
             .catch((err) => console.log(err));

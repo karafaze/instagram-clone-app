@@ -5,6 +5,7 @@ const app = express();
 require("dotenv").config();
 
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
 
 app.use(express.json());
 
@@ -31,12 +32,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => {
-    res.status(200).json({
-        username: "karafaze",
-    });
-});
-
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 
 module.exports = app;

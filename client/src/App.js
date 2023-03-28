@@ -1,35 +1,25 @@
-import React, { useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
-import Login from "./views/login/Login";
-import Register from "./views/register/Register";
-import UserProfile from "./views/userprofile/UserProfile";
-// import Feed from "./views/feed/Feed";
+import PublicRoutes from "./routes/PublicRoutes";
+import PrivateRoutes from "./routes/PrivateRoutes";
+import AuthGard from "./routes/AuthGard";
 
 import "./app.scss";
 
 export default function App() {
-    const [user] = useState(null);
-    // const [user, setUser] = useState(null);
-    // useEffect(() => {
-    //     fetch("http://localhost:3001/")
-    //         .then((res) => res.json())
-    //         .then((data) => {
-    //             console.log(data);
-    //             setUser(data.username);
-    //         })
-    //         .catch((err) => console.log(err));
-    // }, []);
-
     return (
         <React.Fragment>
             <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/*" element={<PublicRoutes />} />
                 <Route
-                    path="/"
-                    element={user ? <UserProfile /> : <Navigate to="/login"/>}
-                />
+                    path="/photowall/*"
+                    element={
+                        <AuthGard>
+                            <PrivateRoutes />
+                        </AuthGard>
+                    }
+                ></Route>
             </Routes>
         </React.Fragment>
     );

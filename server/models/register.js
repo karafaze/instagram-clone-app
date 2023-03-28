@@ -1,5 +1,5 @@
 const { body } = require("express-validator");
-const User = require("./auth");
+const User = require("./user");
 
 const schema = [
     body("username")
@@ -15,6 +15,7 @@ const schema = [
         .custom((username) => {
             return User.findOne({ username: username }).then((user) => {
                 if (user) {
+                    console.log(user)
                     return Promise.reject("This username is already taken.");
                 }
             });

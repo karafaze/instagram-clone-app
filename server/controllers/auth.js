@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/auth");
+const User = require("../models/user");
 
 exports.login = (req, res) => {
     // we first check in the database if the user already exists
@@ -34,7 +34,7 @@ exports.login = (req, res) => {
                 // the userId and its token
                 return res.status(200).json({
                     status: "OK",
-                    user: user._id,
+                    userId: user._id,
                     token: token,
                 });
             });
