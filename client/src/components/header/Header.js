@@ -1,12 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./header.scss";
 
 export default function Header() {
+    const userDetail = useSelector(state => state.authUser.userData)
+
     return (
         <header className="navbar">
             <Link to="/login" className="navbar--title">
-                PhotoWall
+                PhotoWall #{userDetail?.username || ''}
             </Link>
             <div className="navbar--link">
                 <Link to="/login" className="navbar--link__single">

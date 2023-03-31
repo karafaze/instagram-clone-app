@@ -60,7 +60,7 @@ export default function Login() {
                         token: data.token
                     }
                     localStorage.setItem('photowall-user', JSON.stringify(userData))
-                    navigate(`/photowall/${formData.username}`)
+                    navigate(`/photowall/${data.userId}`)
                 }
             })
             .catch((err) => console.log(err));

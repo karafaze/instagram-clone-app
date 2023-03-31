@@ -1,13 +1,19 @@
 import React from "react";
-
+import { useSelector } from "react-redux";
 import "./userbio.scss";
 
-export default function UserBio() {
+export default function UserBio({ isAuthenticatedUser }) {
+    const userDetail = useSelector((state) =>
+        isAuthenticatedUser ? state.authUser : state.randomUser
+    );
     return (
         <React.Fragment>
-            <h3 className="bottom--username">John Doe</h3>
+            <h3 className="bottom--username">
+                {userDetail?.userData.username || ""}
+            </h3>
             <p className="bottom--lorem">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                {userDetail?.userData.bio ||
+                    "Lorem ipsum dolor sit amet consectetur, adipisicing elit."}
             </p>
         </React.Fragment>
     );

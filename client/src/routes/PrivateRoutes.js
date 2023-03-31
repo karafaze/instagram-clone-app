@@ -7,7 +7,7 @@ import Error from '../components/error/Error';
 export default function PrivateRoutes() {
     return (
         <Routes>
-            <Route path="/:username" element={<UserProfile />} />
+            <Route path="/:userId" element={<UserProfile />} />
             <Route path="/feed" element={<Feed />} />
 
             <Route path="*" element={<Error />}/>

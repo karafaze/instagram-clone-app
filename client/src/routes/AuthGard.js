@@ -1,30 +1,33 @@
-import {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function AuthGard({children}){
+import { getItemsFromLocalStorage } from "../utils/localStorageToken";
+
+export default function AuthGard({ children }) {
     const navigate = useNavigate();
-    const [isLogged, setIsLogged] = useState(false);
+    // fetching user is used many times
+    // would need to be exported from utils
 
     useEffect(() => {
-        const items = JSON.parse(localStorage.getItem('photowall-user'))
-        if (!items){
-            return navigate('/login')
+        const items = getItemsFromLocalStorage();
+        if (!items.userId) {
+            return navigate("/login");
         }
-        fetch('/user', {
-            headers: {
-                Authorization: `Bearer ${items.token}`
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'FAILED'){
-                    setIsLogged(false)
-                    return navigate('/login')
-                }
-                setIsLogged(true)
-            })
-            .catch(err => console.log(err))
 
-    }, [])
+        const {userId, token} = items
+        fetch(`/user/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.status === "FAILED") {
+                    return navigate("/login");
+                }
+                return;
+            })
+            .catch((err) => console.log(err));
+    }, [navigate]);
     return children;
 }

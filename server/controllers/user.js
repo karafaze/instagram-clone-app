@@ -1,19 +1,29 @@
-const User = require('../models/user');
+const User = require("../models/user");
 
-exports.getUserProfile = (req, res) => {
-    const {userId} = req.auth;
-    User.findOne({ _id: userId})
+exports.getUser = (req, res) => {
+    const userId = req.params.userId;
+    User.findOne({ _id: userId })
         .then((user) => {
-            console.log(user)
+            const userData = {
+                username: user.username,
+                avatarUrl: user.avatarUrl,
+                bio: user.bio,
+                followedByLength: user.followedBy.length,
+                followedBy: user.followedBy,
+                followingLength: user.following.length,
+                following: user.following,
+                postsLength: user.posts.length,
+                posts: user.posts,
+            };
+            res.status(200).json({
+                status: "OK",
+                data: userData,
+            });
         })
-        .catch(err => {
+        .catch((err) => {
             return res.status(500).json({
-                status: 'FAILED',
-                error: err
-            })
-        })
-    res.status(200).json({
-        status: 'OK',
-        message: 'You got in'
-    })
-}
+                status: "FAILED",
+                error: err,
+            });
+        });
+};
