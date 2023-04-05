@@ -2,10 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import "./userbio.scss";
 
-export default function UserBio({ isAuthenticatedUser }) {
-    const userDetail = useSelector((state) =>
-        isAuthenticatedUser ? state.authUser : state.randomUser
-    );
+export default function UserBio() {
+    const userDetail = useSelector((state) => state.profile);
     return (
         <React.Fragment>
             <h3 className="bottom--username">

@@ -1,10 +1,10 @@
 const User = require("../models/user");
 
 exports.getUser = (req, res) => {
-    const userId = req.params.userId;
-    User.findOne({ _id: userId })
+    User.findOne({ _id: req.params.userId })
         .then((user) => {
             const userData = {
+                userId: user._id,
                 username: user.username,
                 avatarUrl: user.avatarUrl,
                 bio: user.bio,

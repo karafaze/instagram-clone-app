@@ -1,4 +1,4 @@
-import * as actions from "../actions/randomUserActions";
+import * as actions from "../actions/profileActions";
 
 export const initialState = {
     userData: {},
@@ -6,19 +6,19 @@ export const initialState = {
     hasError: false,
 };
 
-export default function randomUserReducer(state = initialState, action) {
+export default function profileReducer(state = initialState, action) {
     switch (action.type) {
-        case actions.GET_RANDOM_USER:
+        case actions.GET_PROFILE:
             return {
                 ...state,
             };
-        case actions.GET_RANDOM_USER_DATA:
+        case actions.GET_PROFILE_DATA:
             return {
                 userData: action.payload,
                 isLoading: false,
                 hasError: false,
             };
-        case actions.GET_RANDOM_USER_FAILURE:
+        case actions.GET_PROFILE_FAILURE:
             return {
                 ...state,
                 isLoading: false,

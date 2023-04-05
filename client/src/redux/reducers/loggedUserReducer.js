@@ -1,4 +1,4 @@
-import * as actions from "../actions/authUserActions";
+import * as actions from "../actions/loggedUserActions";
 
 export const initialState = {
     userData: {},
@@ -6,19 +6,19 @@ export const initialState = {
     hasError: false,
 };
 
-export default function authUserReducer(state = initialState, action) {
+export default function loggedUserReducer(state = initialState, action) {
     switch (action.type) {
-        case actions.GET_AUTH_USER:
+        case actions.GET_LOGGED_USER:
             return {
                 ...state,
             };
-        case actions.GET_AUTH_USER_DATA:
+        case actions.GET_LOGGED_USER_DATA:
             return {
                 userData: action.payload,
                 isLoading: false,
                 hasError: false,
             };
-        case actions.GET_AUTH_USER_FAILURE:
+        case actions.GET_LOGGED_USER_FAILURE:
             return {
                 ...state,
                 isLoading: false,

@@ -8,24 +8,24 @@ import UserBio from "../userbio/UserBio";
 
 import "./userinfo.scss";
 
-export default function UserInfo({ isAuthenticatedUser }) {
+export default function UserInfo() {
     return (
         <section className="userinfo">
             <div className="userinfo--topwrapper">
                 <ProfilePicture />
                 <div className="top--data">
                     <div className="top--data__user">
-                        <UserTag isAuthenticatedUser={isAuthenticatedUser} />
+                        <UserTag />
                         <Follow />
                     </div>
                     <div className="top--data__stats">
-                        <UserSocial isAuthenticatedUser={isAuthenticatedUser} />
+                        <UserSocial />
                     </div>
                 </div>
             </div>
 
             <div className="userinfo--bottomwrapper">
-                <UserBio isAuthenticatedUser={isAuthenticatedUser}/>
+                <UserBio/>
             </div>
         </section>
     );

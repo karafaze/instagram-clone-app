@@ -3,36 +3,36 @@ import {
     getItemsFromLocalStorage,
 } from "../../utils/localStorageToken";
 
-export const GET_RANDOM_USER = "GET_RANDOM_USER";
-export const GET_RANDOM_USER_DATA = "GET_RANDOM_USER_DATA";
-export const GET_RANDOM_USER_FAILURE = "GET_RANDOM_USER_FAILURE";
+export const GET_LOGGED_USER = "GET_LOGGED_USER";
+export const GET_LOGGED_USER_DATA = "GET_LOGGED_USER_DATA";
+export const GET_LOGGED_USER_FAILURE = "GET_LOGGED_USER_FAILURE";
 
-export const getRandomUser = () => {
+export const getLoggedUser = () => {
     return {
-        type: GET_RANDOM_USER,
+        type: GET_LOGGED_USER,
     };
 };
 
-export const getRandomUserData = (data) => {
+export const getLoggedUserData = (data) => {
     return {
-        type: GET_RANDOM_USER_DATA,
+        type: GET_LOGGED_USER_DATA,
         payload: data,
     };
 };
 
-export const getRandomUserFailure = () => {
+export const getLoggedUserFailure = () => {
     return {
-        type: GET_RANDOM_USER_FAILURE,
+        type: GET_LOGGED_USER_FAILURE,
     };
 };
 
-export function fetchRandomUserDetails(userId) {
+export function fetchLoggedUserDetails() {
     return async (dispatch) => {
-        dispatch(getRandomUser());
+        dispatch(getLoggedUser());
         try {
             const items = getItemsFromLocalStorage();
             if (!items.token) {
-                dispatch(getRandomUserFailure());
+                dispatch(getLoggedUserFailure());
                 return;
             };
             const {userId, token} = items;
@@ -41,9 +41,9 @@ export function fetchRandomUserDetails(userId) {
                 getAuthorizationHeader(token)
             );
             const data = await response.json();
-            dispatch(getRandomUserData(data.data));
+            dispatch(getLoggedUserData(data.data));
         } catch (err) {
-            dispatch(getRandomUserFailure());
+            dispatch(getLoggedUserFailure());
         }
     };
 }
