@@ -4,7 +4,7 @@ import "./profilepicture.scss";
 
 export default function ProfilePicture() {
     const userDetail = useSelector(state => state.profile)
-    if (!userDetail) return <p>Loading data</p>
+    if (!userDetail) return <div className="top--picture__empty"></div>
     return (
         <img
             className="top--picture"

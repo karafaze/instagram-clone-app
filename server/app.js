@@ -17,8 +17,10 @@ mongoose
     )
     .then(() => console.log("Successfully connected to MongoDB."))
     .catch((err) => console.log(`Failed to connect to MongoDB : ${err}.`));
-
-app.use(helmet());
+    
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+  }));
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");

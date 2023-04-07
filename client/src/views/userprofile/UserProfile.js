@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
@@ -20,29 +20,20 @@ export default function UserProfile() {
     // authenticatedUserId : the user who is currently logged in
     const { userId: authenticatedUserId } = getItemsFromLocalStorage();
 
+    const isLoggedUser = (requestedUserId === authenticatedUserId)
+
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(fetchLoggedUserDetails(authenticatedUserId));
         dispatch(fetchProfileDetails(requestedUserId));
-        // in case requestedUser is not the same as authenticatedUserId
-        // meaning logged user is visiting another profile page
-        // if (!isAuthenticatedUser){
-        //     // we set authenticatedUser to false
-        //     // request data to server to fill randomUser state data
-        //     console.log('we fetch data for random user now')
-        //     setIsAuthenticatedUser(requestedUserId === authenticatedUserId);
-        //     dispatch(fetchRandomUserDetails(requestedUserId))
-        // } else {
-        //     setIsAuthenticatedUser(requestedUserId === authenticatedUserId)
-        // }
     }, [dispatch, authenticatedUserId, requestedUserId]);
 
     return (
         <React.Fragment>
             <Header />
             <main className="userprofile-page">
-                <UserInfo />
+                <UserInfo isLoggedUser={isLoggedUser}/>
                 <UserPicturesList />
             </main>
             <Footer />

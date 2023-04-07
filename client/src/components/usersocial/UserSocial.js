@@ -2,10 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import "./usersocial.scss";
 
-export default function UserSocial({ isAuthenticatedUser }) {
-    const userDetail = useSelector((state) =>
-        isAuthenticatedUser ? state.authUser : state.randomUser
-    );
+export default function UserSocial() {
+    const userDetail = useSelector(state => state.profile);
 
     return (
         <React.Fragment>

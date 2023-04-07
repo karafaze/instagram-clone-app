@@ -12,6 +12,19 @@
         justify-content: flex-start;
         gap: 1.5em;
     }
+    &--modify{
+        @include flexrow-center;
+        width: 35%;
+        border: 1px solid rgba(0, 0, 0, 0.423);
+        padding:.2em;
+        border-radius: 5px;
+        background-color: #E6E6E6;
+        & > a{
+            text-decoration: none;
+            color: #000;
+            font-size: 1em;
+        }
+    }
 }
 
 .top--data {
