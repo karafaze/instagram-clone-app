@@ -5,18 +5,7 @@ const fs = require("fs");
 exports.getUser = (req, res) => {
     User.findOne({ _id: req.params.userId })
         .then((user) => {
-            const userData = {
-                userId: user._id,
-                username: user.username,
-                avatarUrl: user.avatarUrl,
-                bio: user.bio,
-                followedByLength: user.followedBy.length,
-                followedBy: user.followedBy,
-                followingLength: user.following.length,
-                following: user.following,
-                postsLength: user.posts.length,
-                posts: user.posts,
-            };
+            const userData = getFormattedUserData(user);
             res.status(200).json({
                 status: "OK",
                 data: userData,
@@ -25,7 +14,7 @@ exports.getUser = (req, res) => {
         .catch((err) => {
             return res.status(500).json({
                 status: "FAILED",
-                error: err,
+                error: err.message,
             });
         });
 };
@@ -37,7 +26,7 @@ exports.editUserProfile = (req, res) => {
             status: "FAILED",
             error: "Unauthorized request",
         });
-    } 
+    }
 
     User.findOne({ _id: req.params.userId })
         .then((user) => {
@@ -63,7 +52,7 @@ exports.editUserProfile = (req, res) => {
                 updates["avatarUrl"] = `${req.protocol}://${req.get(
                     "host"
                 )}/uploads/${req.file.filename}`;
-                // below we update user with updates object and 
+                // below we update user with updates object and
                 // make sure we delete the previous picture from storage
                 User.findOneAndUpdate({ _id: req.params.userId }, updates)
                     .then(() => {
@@ -78,7 +67,10 @@ exports.editUserProfile = (req, res) => {
                         });
                     })
                     .catch((err) =>
-                        res.status(500).json({ error: err.message })
+                        res.status(500).json({
+                            status: "FAILED",
+                            error: err.message,
+                        })
                     );
             } else {
                 // no picture was added, so we simply update user
@@ -90,104 +82,173 @@ exports.editUserProfile = (req, res) => {
                         });
                     })
                     .catch((err) =>
-                        res.status(500).json({ error: err.message })
+                        res.status(500).json({
+                            status: "FAILED",
+                            error: err.message,
+                        })
                     );
             }
         })
-        .catch((err) => res.status(500).json({ error: err.message }));
+        .catch((err) => {
+            res.status(500).json({
+                status: "FAILED",
+                error: err.message,
+            });
+        });
 };
 
 exports.editUserFollow = (req, res) => {
-    // this controller will update 2 profiles : 
-        // 1/ the user receving the follow/unfollow
-        // 2/ the user sending the follow/unfollow
-
-    // step 1 :
-        // we want to update the followedBy user RECEIVING with the sending userId
-            // if it's 1 : it means we add the user to the array
-            // if it's -1 : it means we remove the user from the array
-
-    // step 2 : 
-        // we want to update the following user SENDING with the receiving userId
-            // if it's 1 : it means we add the user to the array
-            // if it's -1 : it means we remove the user from the array
-
-    const {profileUserId, number, loggedUserId} = req.body;
-    if (number === 1){
-        User.findOneAndUpdate(
-            {_id: profileUserId}, 
-            {$push: {followedBy: loggedUserId}},
-            {new:true},
-        ).then((updatedUser) => {
-            User.findOneAndUpdate(
-                {_id: loggedUserId},
-                {$push: {following: profileUserId}}
-            ).then(() => {
-                const userData = {
-                    userId: updatedUser._id,
-                    username: updatedUser.username,
-                    avatarUrl: updatedUser.avatarUrl,
-                    bio: updatedUser.bio,
-                    followedByLength: updatedUser.followedBy.length,
-                    followedBy: updatedUser.followedBy,
-                    followingLength: updatedUser.following.length,
-                    following: updatedUser.following,
-                    postsLength: updatedUser.posts.length,
-                    posts: updatedUser.posts,
-                };
-                return res.status(200).json({
-                    status: "OK",
-                    data: userData
-                })
-            }).catch(err => {
-                return res.status(500).json({
-                    status: 'FAILED',
-                    error: err.message
-                })
-            })
-        }).catch(err => {
-            return res.status(500).json({
-                status: 'FAILED',
-                error: err.message
-            })
-        })
-    } else if (number === -1){
-        User.findOneAndUpdate(
-            {_id: profileUserId}, 
-            {$pull: {followedBy: loggedUserId}},
-            {new:true}
-        ).then((updatedUser) => {
-            User.findOneAndUpdate(
-                {_id: loggedUserId},
-                {$pull: {following: profileUserId}}
-            ).then(() => {
-                const userData = {
-                    userId: updatedUser._id,
-                    username: updatedUser.username,
-                    avatarUrl: updatedUser.avatarUrl,
-                    bio: updatedUser.bio,
-                    followedByLength: updatedUser.followedBy.length,
-                    followedBy: updatedUser.followedBy,
-                    followingLength: updatedUser.following.length,
-                    following: updatedUser.following,
-                    postsLength: updatedUser.posts.length,
-                    posts: updatedUser.posts,
-                };
-                return res.status(200).json({
-                    status: "OK",
-                    data: userData
-                })
-            }).catch(err => {
-                return res.status(500).json({
-                    status: 'FAILED',
-                    error: err.message
-                })
-            })
-        }).catch(err => {
-            return res.status(500).json({
-                status: 'FAILED',
-                error: err.message
-            })
+    // retrieve parameters from req.body
+    const { profileUserId, number, loggedUserId } = req.body;
+    // make sure they are included in the request
+    if (!profileUserId || !number || !loggedUserId) {
+        return res.status(400).json({
+            status: "FAILED",
+            error: "Missing required parameters.",
         });
     }
-}
+
+    // we first make sure both users exists in DB beforehand
+    User.find({
+        _id: {
+            $in: [profileUserId, loggedUserId],
+        },
+    })
+        .then((userArray) => {
+            // if we don't have two users in array : it means one or more id failed
+            if (userArray.length !== 2) {
+                return res.status(400).json({
+                    status: "FAILED",
+                    error: "One or more users we not found in the database. Have you inserted the right id's?",
+                });
+            }
+            // else we go on and look for the profile user in DB
+            User.findOne({ _id: profileUserId })
+                .then((user) => {
+                    // we first look for the loggedUser in the 
+                    // profile user followedBy array
+                    const existingUser = user.followedBy.find(
+                        (userId) => userId === loggedUserId
+                    );
+                    // if loggedUser wishes to follow, he must not be in the array yet
+                    if (number === 1 && existingUser) {
+                        return res.status(403).json({
+                            status: "FAILED",
+                            error: "User already followed.",
+                        });
+                    }
+                    // if he wished to unfollow, he must be in the array
+                    if (number === -1 && !existingUser) {
+                        return res.status(403).json({
+                            status: "FAILED",
+                            error: "User not followed yet.",
+                        });
+                    }
+
+                    // now we can finally update the users array
+                    if (number === 1) {
+                        // for a follow, we add logged user to array 
+                        User.findOneAndUpdate(
+                            { _id: profileUserId },
+                            { $push: { followedBy: loggedUserId } },
+                            { new: true }
+                        )
+                            .then((updatedUser) => {
+                                // then we update loggedUser following array to include profile user
+                                User.findOneAndUpdate(
+                                    { _id: loggedUserId },
+                                    { $push: { following: profileUserId } }
+                                )
+                                    .then(() => {
+                                        // if successfull, we return the formatted user object to be user by front
+                                        const userData =
+                                            getFormattedUserData(updatedUser);
+                                        return res.status(200).json({
+                                            status: "OK",
+                                            data: userData,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        return res.status(500).json({
+                                            status: "FAILED",
+                                            error: err.message,
+                                        });
+                                    });
+                            })
+                            .catch((err) => {
+                                return res.status(500).json({
+                                    status: "FAILED",
+                                    error: err.message,
+                                });
+                            });
+                    } else if (number === -1) {
+                        // same operations occur here but we're pull instead of pushing
+                        User.findOneAndUpdate(
+                            { _id: profileUserId },
+                            { $pull: { followedBy: loggedUserId } },
+                            { new: true }
+                        )
+                            .then((updatedUser) => {
+                                User.findOneAndUpdate(
+                                    { _id: loggedUserId },
+                                    { $pull: { following: profileUserId } }
+                                )
+                                    .then(() => {
+                                        const userData =
+                                            getFormattedUserData(updatedUser);
+                                        return res.status(200).json({
+                                            status: "OK",
+                                            data: userData,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        return res.status(500).json({
+                                            status: "FAILED",
+                                            error: err.message,
+                                        });
+                                    });
+                            })
+                            .catch((err) => {
+                                return res.status(500).json({
+                                    status: "FAILED",
+                                    error: err.message,
+                                });
+                            });
+                    } else {
+                        // here we handle the case where neither 1 nor -1 were sent by the front end
+                        return res.status(400).json({
+                            status: "FAILED",
+                            error: "The request was not treated successfully. To fix it, make sure you sent the right parameters.",
+                        });
+                    }
+                })
+                .catch((err) => {
+                    return res.status(500).json({
+                        status: "FAILED",
+                        error: err.message,
+                    });
+                });
+        })
+        .catch((err) => {
+            return res.status(500).json({
+                status: "FAILED",
+                error: err.message,
+            });
+        });
+};
+
+// utils functions to be used above
+const getFormattedUserData = (userObject) => {
+    return {
+        userId: userObject._id,
+        username: userObject.username,
+        avatarUrl: userObject.avatarUrl,
+        bio: userObject.bio,
+        followedByLength: userObject.followedBy.length,
+        followedBy: userObject.followedBy,
+        followingLength: userObject.following.length,
+        following: userObject.following,
+        postsLength: userObject.posts.length,
+        posts: userObject.posts,
+    };
+};

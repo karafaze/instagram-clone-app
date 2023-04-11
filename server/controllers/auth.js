@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const path = require('path');
+const path = require("path");
 
 exports.login = (req, res) => {
     // we first check in the database if the user already exists
@@ -12,7 +12,7 @@ exports.login = (req, res) => {
                 // with custom message
                 return res.status(400).json({
                     status: "FAILED",
-                    field: 'username',
+                    field: "username",
                     error: "Oops, this user is not registered on this platform.",
                 });
             }
@@ -21,7 +21,7 @@ exports.login = (req, res) => {
                 if (!data) {
                     return res.status(400).json({
                         status: "FAILED",
-                        field: 'password',
+                        field: "password",
                         error: "Oops, the password is not correct.",
                     });
                 }
@@ -43,7 +43,7 @@ exports.login = (req, res) => {
         .catch((err) => {
             return res.status(500).json({
                 status: "FAILED",
-                field: 'internal',
+                field: "internal",
                 error: err,
             });
         });
@@ -59,12 +59,14 @@ exports.register = (req, res) => {
         .then((hashedPassword) => {
             // if ok, we create the user and store
             // username, email, hashedpassword
-            const avatarUrl = `${req.protocol}://${req.get('host')}/default/default_avatar.jpeg`
+            const avatarUrl = `${req.protocol}://${req.get(
+                "host"
+            )}/default/default_avatar.jpeg`;
             const user = new User({
                 username: username,
                 email: email,
                 password: hashedPassword,
-                avatarUrl:avatarUrl
+                avatarUrl: avatarUrl,
             });
             user.save().then(() => {
                 return res.status(201).json({
