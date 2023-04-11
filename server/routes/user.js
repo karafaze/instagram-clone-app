@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authentificationCheck = require("../middlewares/jwt-validator");
 const userControllers = require("../controllers/user");
-const multer = require('../middlewares/multer');
+const multer = require("../middlewares/multer");
 const editUserSchema = require("../models/edituser");
 const validateUserInputs = require("../middlewares/signup-validator");
 
@@ -20,15 +20,34 @@ router.get("/", (req, res) => {
 });
 
 // official routes
-router.get("/:userId", authentificationCheck, userControllers.getUser);
-router.put("/:userId", 
-        authentificationCheck, 
-        multer, 
-        // editUserSchema will check if the user's inputs match our requirements
-        editUserSchema,
-        // validateUserInputs will then check for errors
-        // if errors : returns 400 status code and an array of errors + messages
-        // if no errors : calls next()
-        validateUserInputs,
-        userControllers.editUserProfile)
+router.get(
+    "/:userId", 
+    authentificationCheck, 
+    userControllers.getUser
+);
+
+router.post(
+    "/:userId/follow",
+    authentificationCheck,
+    userControllers.editUserFollow
+);
+
+router.put(
+    "/:userId",
+    authentificationCheck,
+    multer,
+    // editUserSchema will check if the user's inputs match our requirements
+    editUserSchema,
+    // validateUserInputs will then check for errors
+    // if errors : returns 400 status code and an array of errors + messages
+    // if no errors : calls next()
+    validateUserInputs,
+    userControllers.editUserProfile
+);
+
+router.put(
+    "/:userId/follow",
+    authentificationCheck,
+    userControllers.editUserFollow
+);
 module.exports = router;

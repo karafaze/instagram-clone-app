@@ -6,8 +6,6 @@ import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import EditFormFile from "../../components/editformfile/EditFormFile";
-import EditFormInput from '../../components/editforminput/EditFormInput'
 
 import "./edituser.scss";
 
@@ -65,6 +63,7 @@ export default function EditUser() {
             setPreview(null)
             return
         }
+
         const objectUrl = URL.createObjectURL(form.avatarUrl)
         setPreview(objectUrl)
 
@@ -95,7 +94,7 @@ export default function EditUser() {
             setForm((prevForm) => {
                 return {
                     ...prevForm,
-                    [name]: value.trim(),
+                    [name]: value,
                 };
             });
         }
@@ -104,14 +103,24 @@ export default function EditUser() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const { token, userId } = getItemsFromLocalStorage("photowall-user");
-        let formData = new FormData();
-        formData = addFieldsToFormData(form, userDetail, formData)
+        const formData = new FormData();
 
+        if (form.username.trim() !== "" &&
+            form.username.trim() !== userDetail.username   
+        ) {
+            formData.append("username", form.username);
+        }
+        if (form.bio.trim() !== "" &&
+            form.bio.trim() !== userDetail.bio
+        ) {
+            formData.append("bio", form.bio);
+        }
+        if (form.avatarUrl) {
+            formData.append("avatar", form.avatarUrl);
+        }
         if ((!formData.has('username') &&
             !formData.has('bio') &&
-            !formData.has('avatar'))){
-            // the user has clicked without changing any fields
-            // so we send him back to his previous page
+            !formData.has('avatarUrl'))){
             return navigate(-1)
         } else {
             fetch(`/user/${userId}`, {
@@ -124,8 +133,6 @@ export default function EditUser() {
                 .then((res) => res.json())
                 .then((result) => {
                     if (result.status === 'OK'){
-                        // update was successfull, so we send the user
-                        // back to the previous page
                         return navigate(-1)
                     }
                     if (result.errors){
@@ -168,32 +175,88 @@ export default function EditUser() {
                     </div>
                     <section className="edituserprofile--main">
                         <form className="edituser-form">
-                            <EditFormFile 
-                                isLoading={!userDetail ? true : false}
-                                avatarUrl={userDetail ? userDetail.avatarUrl : ''}
-                                hasPreview={preview ? true : false}
-                                preview={preview}
-                                handleFileClick={handleFileClick}
-                                handleChange={handleChange}
-                            />
-                            <EditFormInput
-                                id={"username"}
-                                type= {"text"}
-                                name={"username"}
-                                placeholder={"Username"}
-                                value={form.username}
-                                handleChange={handleChange}
-                                errors={checkErrorInForm(formError, 'username')}
-                            />
-                            <EditFormInput
-                                id={"bio"}
-                                type= {"text"}
-                                name={"bio"}
-                                placeholder={"Tell your friends something about you"}
-                                value={form.bio}
-                                handleChange={handleChange}
-                                errors={checkErrorInForm(formError, 'bio')}
-                            />
+                            <div className="edituser-form--filewrapper">
+                                <div className="selectfile-wrapper">
+                                {
+                                    userDetail ? (
+                                        <img 
+                                            className="selectfile-wrapper--current"
+                                            src={userDetail.avatarUrl}
+                                            alt="current-profile-avatar"
+                                        />
+                                    ) : (
+                                        <div className="selectfile-wrapper--current"></div>
+                                    )
+                                }
+                                {
+                                    preview ? (
+                                        <img 
+                                            className="selectfile-wrapper--preview"
+                                            src={preview}
+                                            onClick={handleFileClick} 
+                                            alt="preview-profile-avatar"
+                                        />
+                                    ) : (
+                                        <div 
+                                            className="selectfile-wrapper--preview"
+                                            onClick={handleFileClick}    
+                                        >
+                                            <i className="ri-emotion-happy-line"></i>
+                                        </div>
+                                    )
+                                }
+                                </div>
+                                <button 
+                                    className="selectfile-wrapper--btn"
+                                    onClick={handleFileClick}
+                                >
+                                    Change avatar
+                                </button>
+                                <input
+                                    onChange={handleChange}
+                                    id="select-file" 
+                                    type="file"
+                                    accept="image/*"
+                                    name="avatar"
+                                    style={{display: 'none'}}
+                                />
+                            </div>
+                            <div className="edituser-form--group">
+                                <label
+                                    htmlFor="username"
+                                    className="edituser-form--group__label"
+                                >
+                                    Username
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="username"
+                                    // className="edituser-form--group__input"
+                                    className={`edituser-form--group__input ${formError.username && 'editform-input-error'}`}
+                                    onChange={handleChange}
+                                    name="username"
+                                    value={form.username}
+                                />
+                            </div>
+                            {formError.username && <span className="edituser-form--error">{formError.username.message}</span>}
+                            <div className="edituser-form--group">
+                                <label
+                                    htmlFor="bio"
+                                    className="edituser-form--group__label"
+                                >
+                                    Bio
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="bio"
+                                    className={`edituser-form--group__input ${formError.bio && 'editform-input-error'}`}
+                                    onChange={handleChange}
+                                    name="bio"
+                                    value={form.bio}
+                                
+                                />
+                            </div>
+                            {formError.bio && <span className="edituser-form--error">{formError.bio.message}</span>}
                         </form>
                     </section>
                 </main>
@@ -201,27 +264,6 @@ export default function EditUser() {
             </React.Fragment>
         );
     }
-}
-
-function addFieldsToFormData(currentForm, userDetail, finalForm){
-    // iterate over current form
-    for (const [key, value] of Object.entries(currentForm)){
-        // if the key does not contain avatar
-        if (!key.includes('avatar')){
-            // we check it is not empty or unchanged from the current value
-            if (value !== "" &&
-            value !== userDetail[key]){
-                // if it has changed, we append it to the form
-                finalForm.append(key, value)
-            }
-        } else {
-            // if the key contains avatar and has a value, we append it
-            // but make sure we use the "avatar" to be sync with multer
-            if (value) finalForm.append('avatar', value); 
-        }
-
-    }
-    return finalForm;
 }
 
 function formatErrorsToFormError(errorsArray, currentFormData){
@@ -277,11 +319,4 @@ function updateCurrentFormError(formError, formData){
         return formErrorCopy;
     }
     return formError;
-}
-
-function checkErrorInForm(formError, field){
-    // function to be used to send error message to FormInput.js
-    // we simply want to return either the errorMessage
-    // or null
-    return formError[field] || null
 }

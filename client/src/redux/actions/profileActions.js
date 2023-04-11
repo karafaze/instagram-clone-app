@@ -26,7 +26,43 @@ export const getProfileFailure = () => {
     };
 };
 
-export function fetchProfileDetails(userId) {
+export const fetchProfileFollow = (profileUserId, number, loggedUserId) => {
+    return async(dispatch) => {
+        dispatch(getProfile);
+        try {
+            const items = getItemsFromLocalStorage();
+            if (!items.token) {
+                dispatch(getProfileFailure());
+                return;
+            };
+            const {token} = items;
+            const payload = {
+                profileUserId, number, loggedUserId
+            }
+            const response = await fetch(
+                `/user/${profileUserId}/follow`,
+                {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json;charset=utf-8",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+            const data = await response.json();
+            if (data.status === 'OK') {
+                dispatch(getProfileData(data.data));
+            } else {
+                dispatch(getProfileFailure())
+            }
+        } catch(err) {
+            dispatch(getProfileFailure())
+        }
+    }
+}
+
+export const fetchProfileDetails = (userId) => {
     return async (dispatch) => {
         dispatch(getProfile());
         try {

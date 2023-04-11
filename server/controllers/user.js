@@ -38,6 +38,7 @@ exports.editUserProfile = (req, res) => {
             error: "Unauthorized request",
         });
     } 
+
     User.findOne({ _id: req.params.userId })
         .then((user) => {
             // initialize updates object to take in req.body key and values
@@ -95,3 +96,98 @@ exports.editUserProfile = (req, res) => {
         })
         .catch((err) => res.status(500).json({ error: err.message }));
 };
+
+exports.editUserFollow = (req, res) => {
+    // this controller will update 2 profiles : 
+        // 1/ the user receving the follow/unfollow
+        // 2/ the user sending the follow/unfollow
+
+    // step 1 :
+        // we want to update the followedBy user RECEIVING with the sending userId
+            // if it's 1 : it means we add the user to the array
+            // if it's -1 : it means we remove the user from the array
+
+    // step 2 : 
+        // we want to update the following user SENDING with the receiving userId
+            // if it's 1 : it means we add the user to the array
+            // if it's -1 : it means we remove the user from the array
+
+    const {profileUserId, number, loggedUserId} = req.body;
+    if (number === 1){
+        User.findOneAndUpdate(
+            {_id: profileUserId}, 
+            {$push: {followedBy: loggedUserId}},
+            {new:true},
+        ).then((updatedUser) => {
+            User.findOneAndUpdate(
+                {_id: loggedUserId},
+                {$push: {following: profileUserId}}
+            ).then(() => {
+                const userData = {
+                    userId: updatedUser._id,
+                    username: updatedUser.username,
+                    avatarUrl: updatedUser.avatarUrl,
+                    bio: updatedUser.bio,
+                    followedByLength: updatedUser.followedBy.length,
+                    followedBy: updatedUser.followedBy,
+                    followingLength: updatedUser.following.length,
+                    following: updatedUser.following,
+                    postsLength: updatedUser.posts.length,
+                    posts: updatedUser.posts,
+                };
+                return res.status(200).json({
+                    status: "OK",
+                    data: userData
+                })
+            }).catch(err => {
+                return res.status(500).json({
+                    status: 'FAILED',
+                    error: err.message
+                })
+            })
+        }).catch(err => {
+            return res.status(500).json({
+                status: 'FAILED',
+                error: err.message
+            })
+        })
+    } else if (number === -1){
+        User.findOneAndUpdate(
+            {_id: profileUserId}, 
+            {$pull: {followedBy: loggedUserId}},
+            {new:true}
+        ).then((updatedUser) => {
+            User.findOneAndUpdate(
+                {_id: loggedUserId},
+                {$pull: {following: profileUserId}}
+            ).then(() => {
+                const userData = {
+                    userId: updatedUser._id,
+                    username: updatedUser.username,
+                    avatarUrl: updatedUser.avatarUrl,
+                    bio: updatedUser.bio,
+                    followedByLength: updatedUser.followedBy.length,
+                    followedBy: updatedUser.followedBy,
+                    followingLength: updatedUser.following.length,
+                    following: updatedUser.following,
+                    postsLength: updatedUser.posts.length,
+                    posts: updatedUser.posts,
+                };
+                return res.status(200).json({
+                    status: "OK",
+                    data: userData
+                })
+            }).catch(err => {
+                return res.status(500).json({
+                    status: 'FAILED',
+                    error: err.message
+                })
+            })
+        }).catch(err => {
+            return res.status(500).json({
+                status: 'FAILED',
+                error: err.message
+            })
+        });
+    }
+}
