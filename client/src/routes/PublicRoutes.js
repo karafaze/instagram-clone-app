@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Login from "../views/login/Login";
 import Register from "../views/register/Register";
-import Error from '../components/error/Error';
+import Error from '../views/error/Error';
 
 export default function PublicRoutes() {
     return (

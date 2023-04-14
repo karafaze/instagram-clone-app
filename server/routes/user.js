@@ -19,13 +19,25 @@ router.get("/", (req, res) => {
         .catch((err) => res.status(500).json({ status: "FAILED", error: err }));
 });
 
+// route for authgard component
+router.get('/protected/:userId', authentificationCheck, (req, res) => {
+    res.status(200).json({
+        status:'OK',
+        message:'Authorized to go forward'
+    })
+})
+
 // official routes
 router.get(
     "/:userId", 
     authentificationCheck, 
-    userControllers.getUser
+    userControllers.getUserById
 );
 
+router.get("/search/:username",
+    authentificationCheck,
+    userControllers.getUserByName)
+    
 router.post(
     "/:userId/follow",
     authentificationCheck,
@@ -45,9 +57,4 @@ router.put(
     userControllers.editUserProfile
 );
 
-router.put(
-    "/:userId/follow",
-    authentificationCheck,
-    userControllers.editUserFollow
-);
 module.exports = router;

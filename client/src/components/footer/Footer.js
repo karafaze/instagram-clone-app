@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <footer className="footer">
             <div className="footer--link">
-                <Link to="/login">
+                <Link to="/photowall/search">
                     <i className="ri-search-line"></i>
                 </Link>
             </div>

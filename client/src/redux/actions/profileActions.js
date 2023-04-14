@@ -77,8 +77,14 @@ export const fetchProfileDetails = (userId) => {
                 getAuthorizationHeader(token)
             );
             const data = await response.json();
-            dispatch(getProfileData(data.data));
+            if (data.status === 'FAILED'){
+                dispatch(getProfileFailure())
+            }
+            if (data.status === 'OK'){
+                dispatch(getProfileData(data.data));
+            }
         } catch (err) {
+            console.log(err)
             dispatch(getProfileFailure());
         }
     };

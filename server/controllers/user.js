@@ -2,10 +2,10 @@ const User = require("../models/user");
 const path = require("path");
 const fs = require("fs");
 
-exports.getUser = (req, res) => {
+exports.getUserById = (req, res) => {
     User.findOne({ _id: req.params.userId })
         .then((user) => {
-            const userData = getFormattedUserData(user);
+            const userData = getFormattedProfileUserData(user);
             res.status(200).json({
                 status: "OK",
                 data: userData,
@@ -18,6 +18,36 @@ exports.getUser = (req, res) => {
             });
         });
 };
+
+exports.getUserByName = (req, res) => {
+    const {username} = req.params;
+    // retrieve list of users containings username const
+    User.find({ username: new RegExp(username)})
+        .then(users => {
+            // if list is empty
+            // still send good status code with failure message
+            if (users.length === 0){
+                return res.status(200).json({
+                    status: 'FAILED',
+                    message: 'User not found. Try typing something else...'
+                })
+            }
+            // filter out own user from the list 
+            let userList = users.filter(user => String(user._id) !== req.auth.userId)
+            // format users data to be sent to front-end
+            userList = getFormattedSearchUser(userList)
+            return res.status(200).json({
+                status:'OK',
+                data: userList
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                status:'FAILED',
+                message: 'An error ocurred on the server-side. Please try again.'
+            })
+        })
+}
 
 exports.editUserProfile = (req, res) => {
     // check if another user is trying to modify another account
@@ -162,7 +192,7 @@ exports.editUserFollow = (req, res) => {
                                     .then(() => {
                                         // if successfull, we return the formatted user object to be user by front
                                         const userData =
-                                            getFormattedUserData(updatedUser);
+                                            getFormattedProfileUserData(updatedUser);
                                         return res.status(200).json({
                                             status: "OK",
                                             data: userData,
@@ -195,7 +225,7 @@ exports.editUserFollow = (req, res) => {
                                 )
                                     .then(() => {
                                         const userData =
-                                            getFormattedUserData(updatedUser);
+                                            getFormattedProfileUserData(updatedUser);
                                         return res.status(200).json({
                                             status: "OK",
                                             data: userData,
@@ -238,7 +268,7 @@ exports.editUserFollow = (req, res) => {
 };
 
 // utils functions to be used above
-const getFormattedUserData = (userObject) => {
+const getFormattedProfileUserData = (userObject) => {
     return {
         userId: userObject._id,
         username: userObject.username,
@@ -252,3 +282,15 @@ const getFormattedUserData = (userObject) => {
         posts: userObject.posts,
     };
 };
+
+function getFormattedSearchUser(arr) {
+    return arr.map(user => {
+        return {
+            username: user.username,
+            userId: user._id,
+            avatarUrl: user.avatarUrl,
+            followedBy: user.followedBy,
+            following: user.following,
+        }
+    })
+}
