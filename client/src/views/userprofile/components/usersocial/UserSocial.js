@@ -1,22 +1,22 @@
 import React from "react";
 import { useSelector } from "react-redux";
+
 import "./usersocial.scss";
 
 export default function UserSocial() {
-    const userDetail = useSelector(state => state.profile);
-
+    const userData = useSelector(state => state.profile.userData);
     return (
         <React.Fragment>
             <div className="stats--single">
-                <span>{userDetail?.userData.postsLength || 0}</span>
+                <span>{userData?.postsLength || 0}</span>
                 <p>Posts</p>
             </div>
             <div className="stats--single">
-                <span>{userDetail?.userData.followedByLength || 0}</span>
+                <span>{userData?.followedByLength || 0}</span>
                 <p>Followers</p>
             </div>
             <div className="stats--single">
-                <span>{userDetail?.userData.followingLength || 0}</span>
+                <span>{userData?.followingLength || 0}</span>
                 <p>Following</p>
             </div>
         </React.Fragment>

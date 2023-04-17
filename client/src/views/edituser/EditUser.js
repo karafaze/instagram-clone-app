@@ -32,11 +32,6 @@ export default function EditUser() {
     // authenticatedUserId : the user who is currently logged in
     const { userId: authenticatedUserId } = getItemsFromLocalStorage();
 
-    // fill logged user data
-    useEffect(() => {
-        dispatch(fetchLoggedUserDetails(authenticatedUserId));
-    }, [dispatch, authenticatedUserId, requestedUserId]);
-
     // initialize form values with current user data
     useEffect(() => {
         const { token, userId } = getItemsFromLocalStorage("photowall-user");
@@ -70,6 +65,7 @@ export default function EditUser() {
         return () => URL.revokeObjectURL(objectUrl)
     }, [form.avatarUrl])
 
+    // set form errors if any
     useEffect(() => {
         setFormError(updateCurrentFormError(formError, form))
     }, [form])
@@ -106,6 +102,7 @@ export default function EditUser() {
         let formData = new FormData();
         formData = addFieldsToFormData(form, userDetail, formData)
 
+        
         if ((!formData.has('username') &&
             !formData.has('bio') &&
             !formData.has('avatar'))){
@@ -123,8 +120,10 @@ export default function EditUser() {
                 .then((res) => res.json())
                 .then((result) => {
                     if (result.status === 'OK'){
-                        // update was successfull, so we send the user
-                        // back to the previous page
+                        // update was successfull, 
+                        // we fetch loggeduserdetails to get updated profile 
+                        // and we send the user back to the previous page
+                        dispatch(fetchLoggedUserDetails(userId))
                         return navigate(-1)
                     }
                     if (result.errors){

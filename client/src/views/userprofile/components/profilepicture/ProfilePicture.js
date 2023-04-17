@@ -3,12 +3,11 @@ import { useSelector } from "react-redux";
 import "./profilepicture.scss";
 
 export default function ProfilePicture() {
-    const userDetail = useSelector(state => state.profile)
-    if (!userDetail) return <div className="top--picture__empty"></div>
+    const userData = useSelector(state => state.profile.userData)
     return (
         <img
-            className="top--picture"
-            src={userDetail.userData.avatarUrl}
+            className={userData ? "top--picture" : "top--picture__empty"}
+            src={userData?.avatarUrl || ""}
             alt="avatar"
         ></img>
     );

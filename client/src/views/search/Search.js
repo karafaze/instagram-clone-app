@@ -4,6 +4,7 @@ import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import Footer from "../../components/footer/Footer";
 
+import SearchForm from "./components/searchform/SearchForm";
 import UserQueryList from "./components/userquerylist/UserQueryList";
 import UserQueryError from "./components/userqueryerror/UserQueryError";
 
@@ -51,20 +52,11 @@ export default function Search() {
                     >
                         <i className="ri-arrow-left-s-line"></i>
                     </div>
-                    <form onSubmit={handleSubmit} className="search-page--form">
-                        <button className="search-page--form__btn">
-                            <i className="ri-search-2-line"></i>
-                        </button>
-                        <input
-                            className="search-page--form__input"
-                            placeholder="Search user"
-                            name="query"
-                            value={query}
-                            onChange={(e) =>
-                                setQuery(e.target.value.trim().toLowerCase())
-                            }
-                        />
-                    </form>
+                    <SearchForm 
+                        handleSubmit={handleSubmit}
+                        query={query}
+                        setQuery={setQuery}
+                    />
                 </section>
 
                 <section className="search-page--result">

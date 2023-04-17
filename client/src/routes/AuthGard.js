@@ -19,7 +19,6 @@ export default function AuthGard({ children }) {
                 .then(res => res.json())
                 .then(result => {
                     if (result.status === 'FAILED'){
-                        console.log(result)
                         return navigate('/login')
                     }
                 })

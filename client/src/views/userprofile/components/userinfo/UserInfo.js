@@ -1,6 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
 
 import ProfilePicture from "../profilepicture/ProfilePicture";
 import UserTag from "../usertag/UserTag";
@@ -11,7 +10,7 @@ import UserBio from "../userbio/UserBio";
 import "./userinfo.scss";
 
 export default function UserInfo({isLoggedUser}) {
-    const loggedUserDetail = useSelector(state => state.loggedUser.userData)
+    const location = useLocation()
     return (
         <section className="userinfo">
             <div className="userinfo--topwrapper">
@@ -31,7 +30,7 @@ export default function UserInfo({isLoggedUser}) {
             </div>
             {isLoggedUser && (
                 <div className="userinfo--modify">
-                    <Link to={`/photowall/${loggedUserDetail.userId}/edit`}>Edit profile</Link>
+                    <Link to={`${location.pathname}/edit`}>Edit profile</Link>
                 </div>
             )}
         </section>
