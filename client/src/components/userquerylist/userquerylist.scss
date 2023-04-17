@@ -4,9 +4,6 @@
     display: flex;
     flex-direction: column;
     gap: 1em;
-    &--wrapper{
-        display: flex;
-    }
     &--usercard{
         text-decoration: none;
         color: #000;
@@ -15,22 +12,12 @@
         width: 100%;
         gap: 1em;
         &__name{
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
         }
         &__avatar{
-            width: 4.5em;
+            width: 3.5em;
             border-radius: 50%;
         }
     }
-    &--follow{
-        padding: 0.3em;
-        background-color: $color-quaternary;
-        color: #fff;
-        border-radius: 3px;
-        font-size: 1.1em;
-        cursor: pointer;
-    }
-
-
 }

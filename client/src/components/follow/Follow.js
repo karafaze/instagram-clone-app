@@ -12,19 +12,25 @@ export default function Follow() {
 
     const isFollowing = userDetail?.followedBy?.includes(loggedUser.userId);
 
-    const handleFollow = () => {
+    const handleFollow = async () => {
+        // we first disable the span button to prevent multiple calls
+        let followBtn = document.querySelector('#follow')
+        followBtn.classList.add('disabled-btn');
         if (isFollowing) {
-            dispatch(fetchProfileFollow(userDetail.userId, -1, loggedUser.userId))
+            await dispatch(fetchProfileFollow(userDetail.userId, -1, loggedUser.userId))
             console.log('will unfollow')
         } else {
-            dispatch(fetchProfileFollow(userDetail.userId, 1, loggedUser.userId))
+            await dispatch(fetchProfileFollow(userDetail.userId, 1, loggedUser.userId))
             console.log('will follow')
         }
+        // when follow has been dealt with in the back-end
+        // re-instate clicking option on span button
+        followBtn.classList.remove('disabled-btn')
     };
 
     if (!userDetail || !loggedUser) return <p>Loading...</p>;
     return (
-        <span className="top--data__follow" onClick={handleFollow}>
+        <span id="follow" className="top--data__follow" onClick={handleFollow}>
             {isFollowing ? "unfollow" : "follow"}
         </span>
     );

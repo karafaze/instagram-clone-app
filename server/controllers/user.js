@@ -21,7 +21,7 @@ exports.getUserById = (req, res) => {
 
 exports.getUserByName = (req, res) => {
     const {username} = req.params;
-    // retrieve list of users containings username const
+    // retrieve list of users containing username constant with regular expressions
     User.find({ username: new RegExp(username)})
         .then(users => {
             // if list is empty
@@ -35,7 +35,7 @@ exports.getUserByName = (req, res) => {
             // filter out own user from the list 
             let userList = users.filter(user => String(user._id) !== req.auth.userId)
             // format users data to be sent to front-end
-            userList = getFormattedSearchUser(userList)
+            userList = getFormattedSearchUserData(userList)
             return res.status(200).json({
                 status:'OK',
                 data: userList
@@ -283,7 +283,7 @@ const getFormattedProfileUserData = (userObject) => {
     };
 };
 
-function getFormattedSearchUser(arr) {
+function getFormattedSearchUserData(arr) {
     return arr.map(user => {
         return {
             username: user.username,

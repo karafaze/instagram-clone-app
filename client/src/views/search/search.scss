@@ -1,45 +1,57 @@
 @import "../../sass/main";
 
+
 .search-page{
-    padding: 4em .5em 0.5em .5em;
     display: flex;
     flex-direction: column;
     gap: 1em;
-    &--title{
-        font-size: 1.2em;
-        font-weight: normal;
-        text-align: center;
-    }
-    &--form{
-        @include flexcenter;
-        margin: 0 auto;
+    &--search{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         width: 100%;
-        &__input{
-            width: 100%;
-            padding: .8em 0.5em;
-            border: 2px solid $color-primary;
-            outline: none;
-            font-size: 1.1em;
-            border-radius: 5px 0 0 5px;
-            font-family: $font-text;
-            &::placeholder{
-                font-size: 1em;
-            }
-        }
+        padding: 1em 1em 1em 0em;
+        border-bottom: 1px solid #e2e2e2;
+        box-shadow: 0px 2px 15px -1px rgba(0, 0, 0, 0.2)
+    };
+    &--goback{
+        @include flexcenter;
+        text-decoration: none;
+        color: #000;
+        font-size: 1.9em;
+        cursor: pointer;
+    };
+    &--form{
+        width: 100%;
+        @include flexcenter;
         &__btn{
-            font-size: 1.7em;
-            background-color: $color-primary;
-            border-radius: 0px 5px 5px 0px;
-            color: #fff;
-            @include flexcenter;
-            padding: .47em;
+            background-color: $color-quaternary;
+            font-size: 1.3em;
             cursor: pointer;
             outline: none;
             border: none;
-        }
-    }
+            color: #fff;
+            // padding: .45em;
+            border-radius: 5px 0 0 5px;
+            padding: .55em .45em .35em .45em
+        };
+        &__input{
+            width: 100%;
+            background-color: $color-quaternary;
+            color: #fff;
+            outline: none;
+            font-size: 1.1em;
+            font-family: $font-text;
+            border: none;
+            padding: .7em 0.6em;
+            border-radius: 0 5px 5px 0;
+            &::placeholder{
+                color: #ffffff7f;
+                font-size: .9em;
+            }
+        };
+    };
     &--result{
-        border-left: 1px solid black;
-        padding-left: .5em;
-    }
+        padding-left: .5em
+    };
 }
