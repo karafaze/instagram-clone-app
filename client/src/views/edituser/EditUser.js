@@ -6,8 +6,9 @@ import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import EditFormFile from "../../components/editformfile/EditFormFile";
-import EditFormInput from '../../components/editforminput/EditFormInput'
+
+import EditFormFile from "./components/editformfile/EditFormFile";
+import EditFormInput from './components/editforminput/EditFormInput'
 
 import "./edituser.scss";
 
@@ -22,16 +23,14 @@ export default function EditUser() {
         bio: "",
         avatarUrl: null,
     });
-
+    // form error if errors
     const [formError, setFormError] = useState({})
-
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     // requestedUserId : the user we currently want to check the profile page
     const { userId: requestedUserId } = useParams();
     // authenticatedUserId : the user who is currently logged in
     const { userId: authenticatedUserId } = getItemsFromLocalStorage();
-
-    const dispatch = useDispatch();
 
     // fill logged user data
     useEffect(() => {

@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
-import Login from "../views/login/Login";
-import Register from "../views/register/Register";
-import Error from '../views/error/Error';
+import Login from "../views/auth/login/Login";
+import Register from "../views/auth/register/Register";
+import NotFound from '../views/notfound/NotFound';
 
 export default function PublicRoutes() {
     return (
@@ -12,7 +12,7 @@ export default function PublicRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route path="*" element={<Error />}/>
+            <Route path="*" element={<NotFound />}/>
         </Routes>
     );
 }

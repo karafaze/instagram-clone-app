@@ -1,0 +1,13 @@
+.stats--single {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    & > span {
+        font-size: 1.1em;
+        font-weight: 700;
+    }
+    & > p {
+        font-size: 1.1em;
+    }
+}

@@ -1,17 +1,15 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLoggedUserDetails } from "../../redux/actions/loggedUserActions";
 import { fetchProfileDetails } from "../../redux/actions/profileActions";
-
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import UserInfo from "../../components/userinfo/UserInfo";
-import UserPicturesList from "../../components/userpictureslist/UserPictureList";
-import Error from '../../views/error/Error';
+
+import UserInfo from "./components/userinfo/UserInfo";
+import UserPicturesList from "./components/userpictureslist/UserPictureList";
+import NotFound from '../../views/notfound/NotFound';
 
 import "./userprofile.scss";
 
@@ -26,12 +24,11 @@ export default function UserProfile() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchLoggedUserDetails(authenticatedUserId));
         dispatch(fetchProfileDetails(requestedUserId));
     }, [dispatch, authenticatedUserId, requestedUserId]);
 
     if (error){
-        return <Error />
+        return <NotFound />
     }
     return (
         <React.Fragment>

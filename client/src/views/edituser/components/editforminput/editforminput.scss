@@ -1,0 +1,36 @@
+@import "../../../../sass/main";
+
+.edituser-form {
+    &--group {
+        padding: 0.2em 0.5em;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5em;
+        &__label {
+            width: 25%;
+            font-size: 1.05em;
+        }
+        &__input {
+            padding: 1em 0.5em;
+            width: 70%;
+            border: none;
+            font-family: $font-text;
+            font-size: 1em;
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+    &--group:not(:last-child) > input {
+        border-bottom: 1px solid #e2e2e2;
+    }
+    &--error {
+        padding-left: 0.5em;
+        font-size: 0.8em;
+    }
+}
+
+.editform-input-error {
+    border-left: 1px solid red;
+}

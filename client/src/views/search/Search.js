@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useDispatch } from "react-redux";
-import { fetchLoggedUserDetails } from "../../redux/actions/loggedUserActions";
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import Footer from "../../components/footer/Footer";
-import UserQueryList from "../../components/userquerylist/UserQueryList";
-import UserQueryError from "../../components/userqueryerror/UserQueryError";
+
+import UserQueryList from "./components/userquerylist/UserQueryList";
+import UserQueryError from "./components/userqueryerror/UserQueryError";
 
 import "./search.scss";
 
@@ -17,15 +15,9 @@ export default function Search() {
     const [queryError, setQueryError] = useState(null);
     const navigate = useNavigate();
 
-    const { userId: authenticatedUserId, token } = getItemsFromLocalStorage();
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(fetchLoggedUserDetails(authenticatedUserId));
-    }, [dispatch, authenticatedUserId]);
-
     const handleSubmit = (e) => {
         e.preventDefault();
+        const { token } = getItemsFromLocalStorage();
         fetch(`/user/search/${query}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
