@@ -9,6 +9,7 @@ import Feed from "../views/feed/Feed";
 import NotFound from "../views/notfound/NotFound";
 import EditUser from "../views/edituser/EditUser";
 import Search from '../views/search/Search';
+import UserFollowStat from "../views/userfollowstat/UserFollowStat";
 
 export default function PrivateRoutes() {
     const dispatch = useDispatch()
@@ -21,6 +22,7 @@ export default function PrivateRoutes() {
             <Route path="/:userId" element={<UserProfile />} />
             <Route path="/:userId/feed" element={<Feed />} />
             <Route path="/:userId/edit" element={<EditUser />} />
+            <Route path="/:userId/follow" element={<UserFollowStat />} />
             <Route path="/search" element={<Search />}/>
             <Route path="*" element={<NotFound />}/>
         </Routes>

@@ -6,7 +6,7 @@ const multer = require("../middlewares/multer");
 const editUserSchema = require("../models/edituser");
 const validateUserInputs = require("../middlewares/signup-validator");
 
-// used for Postman mainly
+// test used for Postman mainly or accessing all raw users 
 const User = require("../models/user");
 router.get("/", (req, res) => {
     User.find()

@@ -1,0 +1,26 @@
+@import "../../sass/main";
+
+.userfollowstat-page{
+    &--username{
+        font-size: 1.2em;
+        font-weight: 600;
+        margin: 0 auto;
+    }
+    &--top{
+        @include flexrow-center;
+        justify-content: space-around;
+        & > span{
+            font-size: 1.1em;
+            width: 50%;
+            text-align: center;
+            padding: .5em 0;
+            border-radius: 0px 0px 5px 5px;
+            margin-bottom: 1em;
+        }
+    }
+}
+
+.is-active-tab{
+    background-color: $color-quaternary;
+    color: #fff;
+}

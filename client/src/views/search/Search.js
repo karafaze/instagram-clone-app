@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
+import HeaderBack from "../../components/headerback/HeaderBack";
 import Footer from "../../components/footer/Footer";
 
 import SearchForm from "./components/searchform/SearchForm";
@@ -14,7 +14,6 @@ export default function Search() {
     const [query, setQuery] = useState("");
     const [queryData, setQueryData] = useState(null);
     const [queryError, setQueryError] = useState(null);
-    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -45,20 +44,13 @@ export default function Search() {
     return (
         <React.Fragment>
             <main className="search-page">
-                <section className="search-page--search">
-                    <div 
-                        onClick={() => navigate(-1)}
-                        className="search-page--goback"
-                    >
-                        <i className="ri-arrow-left-s-line"></i>
-                    </div>
+                <HeaderBack>
                     <SearchForm 
                         handleSubmit={handleSubmit}
                         query={query}
                         setQuery={setQuery}
                     />
-                </section>
-
+                </HeaderBack>
                 <section className="search-page--result">
                     {queryData && <UserQueryList userList={queryData} />}
                     {queryError && <UserQueryError message={queryError} />}

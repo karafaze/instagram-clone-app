@@ -1,0 +1,18 @@
+.follow{
+    &--usercard{
+        text-decoration: none;
+        color: #000;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 1em;
+        &__name{
+            font-size: 1em;
+            font-weight: 600;
+        }
+        &__avatar{
+            width: 3.5em;
+            border-radius: 50%;
+        }
+    }
+}

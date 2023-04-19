@@ -2,7 +2,9 @@
 
 .search-page{
     &--form{
-        width: 100%;
+        width: 90%;
+        margin-left: auto;
+        // border: 1px solid green;
         @include flexcenter;
         &__btn{
             background-color: $color-quaternary;
