@@ -15,6 +15,7 @@ export default function UserFollowStat() {
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.profile.userData);
     const [showFollowers, setShowFollowers] = useState(true);
+    
     useEffect(() => {
         dispatch(fetchProfileDetails(userId));
     }, [dispatch, userId]);
@@ -41,7 +42,7 @@ export default function UserFollowStat() {
                         Following
                     </span>
                 </div>
-                <section className="follow-list">
+                <section className="userfollowstat-page--follow-list">
                     <Followers showFollowers={showFollowers} />
                 </section>
             </main>

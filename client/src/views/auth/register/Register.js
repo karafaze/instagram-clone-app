@@ -26,7 +26,7 @@ export default function Register() {
         setFormData((prevForm) => {
             return {
                 ...prevForm,
-                [name]: value,
+                [name]: value.trim(),
             };
         });
     };

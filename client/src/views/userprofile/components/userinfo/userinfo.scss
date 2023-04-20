@@ -5,26 +5,33 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5em;
-    padding: 0em .5em;
+    gap: .8em;
+    padding: 3.5em .5em 0 .5em;
     &--topwrapper {
         @include flexrow-center;
         justify-content: flex-start;
         gap: 1.5em;
     }
-    &--modify{
+    &--options{
         @include flexrow-center;
-        width: 35%;
-        border: 1px solid rgba(0, 0, 0, 0.423);
-        padding:.2em;
-        border-radius: 5px;
-        background-color: #E6E6E6;
-        & > a{
-            text-decoration: none;
-            color: #000;
-            font-size: 1em;
+        justify-content: space-around;
+        width: 100%;
+        &__modify, &__create-post{
+            text-align: center;
+            width: 49%;
+            border: 1px solid rgb(0, 0, 0);
+            padding:.3em;
+            border-radius: 5px;
+            background-color: $color-quaternary;
+            & > a{
+                text-decoration: none;
+                color: #fff;
+                font-weight: 600;
+                font-size: 1em;
+            }
         }
     }
+
 }
 
 .top--data {

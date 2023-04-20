@@ -3,6 +3,7 @@ import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import HeaderBack from "../../components/headerback/HeaderBack";
 import Footer from "../../components/footer/Footer";
+import LoadingSpinner from "../../components/loadingspinner/LoadingSpinner";
 
 import SearchForm from "./components/searchform/SearchForm";
 import UserQueryList from "./components/userquerylist/UserQueryList";
@@ -12,11 +13,13 @@ import "./search.scss";
 
 export default function Search() {
     const [query, setQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
     const [queryData, setQueryData] = useState(null);
     const [queryError, setQueryError] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsLoading(true)
         const { token } = getItemsFromLocalStorage();
         fetch(`/user/search/${query}`, {
             headers: {
@@ -25,15 +28,19 @@ export default function Search() {
         })
             .then((res) => res.json())
             .then((result) => {
-                if (result.status === "OK") {
-                    setQueryData(result.data);
-                    setQueryError(null);
-                }
-                if (result.status === "FAILED") {
-                    console.log(result.message);
-                    setQueryError(result.message);
-                    setQueryData(null);
-                }
+                setTimeout(() => {
+                    if (result.status === "OK") {
+                        setQueryData(result.data);
+                        setQueryError(null);
+                    }
+                    if (result.status === "FAILED") {
+                        console.log(result.message);
+                        setQueryError(result.message);
+                        setQueryData(null);
+                    }
+                    setIsLoading(false)
+                }, 2000)
+
             })
             .catch((err) => {
                 console.log(err);
@@ -52,8 +59,15 @@ export default function Search() {
                     />
                 </HeaderBack>
                 <section className="search-page--result">
-                    {queryData && <UserQueryList userList={queryData} />}
-                    {queryError && <UserQueryError message={queryError} />}
+                    { isLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <React.Fragment>
+                            {queryData && <UserQueryList userList={queryData} />}
+                            {queryError && <UserQueryError message={queryError} />}
+                        </React.Fragment>
+                    )}
+
                 </section>
             </main>
             <Footer />

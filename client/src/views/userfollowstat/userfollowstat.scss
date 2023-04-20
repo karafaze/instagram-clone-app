@@ -1,6 +1,8 @@
 @import "../../sass/main";
 
 .userfollowstat-page{
+    display: flex;
+    flex-direction: column;
     &--username{
         font-size: 1.2em;
         font-weight: 600;
@@ -9,14 +11,18 @@
     &--top{
         @include flexrow-center;
         justify-content: space-around;
+        margin-bottom: .2em;
         & > span{
             font-size: 1.1em;
             width: 50%;
             text-align: center;
             padding: .5em 0;
             border-radius: 0px 0px 5px 5px;
-            margin-bottom: 1em;
         }
+    }
+    &--follow-list{
+        display: flex;
+        flex-grow: .8;
     }
 }
 

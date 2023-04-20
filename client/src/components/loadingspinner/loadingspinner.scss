@@ -1,0 +1,44 @@
+@import "../../sass/main";
+
+.loading-spinner {
+    width: 100%;
+    margin: auto 0;
+    @include flexcolumn-center;
+    // height: 80vh;
+    &--circle{
+        position: relative;
+        width: 9em;
+        height: 9em;
+        // width: 11em;
+        // height: 11em;
+        border-radius: 50%;
+        background: linear-gradient(90deg, $color-quaternary 50%, transparent 50%), 
+        linear-gradient(0deg, $color-quaternary 50%, $color-primary 50% );
+        animation: rotating-spinner 1000ms infinite;
+        &__inner{
+            position: relative;
+            top: 1em;
+            left: 1em;
+            width: 7em;
+            height: 7em;
+            // width: 9em;
+            // height: 9em;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+    }
+    &--message {
+        margin-top:1em;
+        font-size: 1.3em;
+    }
+}
+
+@keyframes rotating-spinner {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+    
+}

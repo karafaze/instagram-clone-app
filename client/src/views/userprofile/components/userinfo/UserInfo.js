@@ -29,8 +29,13 @@ export default function UserInfo({isLoggedUser}) {
                 <UserBio/>
             </div>
             {isLoggedUser && (
-                <div className="userinfo--modify">
-                    <Link to={`${location.pathname}/edit`}>Edit profile</Link>
+                <div className="userinfo--options">
+                    <div className="userinfo--options__modify">
+                        <Link to={`${location.pathname}/edit`}>Edit profile</Link>
+                    </div>
+                    <div className="userinfo--options__create-post">
+                        <Link to={`${location.pathname}`}>Create post</Link>
+                    </div>
                 </div>
             )}
         </section>

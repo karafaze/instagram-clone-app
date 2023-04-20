@@ -25,7 +25,7 @@ export default function Login() {
         setFormData((prevForm) => {
             return {
                 ...prevForm,
-                [name]: value,
+                [name]: value.trim(),
             };
         });
     };
@@ -64,6 +64,7 @@ export default function Login() {
                 }
             })
             .catch((err) => console.log(err));
+
     };
 
     return (
@@ -132,4 +133,8 @@ function updateCurrentFormError(formError, formData){
         return formError
     }
     return formError
+}
+
+function checkIfEmpty(input){
+    return input === ''
 }

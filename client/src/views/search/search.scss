@@ -3,6 +3,8 @@
     flex-direction: column;
     gap: 1em;
     &--result{
-        padding-left: .5em
+        display: flex;
+        padding-left: .5em;
+        flex-grow: .8;
     };
 }

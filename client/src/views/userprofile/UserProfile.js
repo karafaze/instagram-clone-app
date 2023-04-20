@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProfileDetails } from "../../redux/actions/profileActions";
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
-import NotFound from '../../views/notfound/NotFound';
+import NotFound from "../../views/notfound/NotFound";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import LoadingSpinner from "../../components/loadingspinner/LoadingSpinner";
 
 import UserInfo from "./components/userinfo/UserInfo";
 import UserPicturesList from "./components/userpictureslist/UserPictureList";
@@ -21,25 +22,31 @@ export default function UserProfile() {
     // authenticatedUserId : the user who is currently logged in
     const { userId: authenticatedUserId } = getItemsFromLocalStorage();
     // create isLoggedUser to be sent as a prop to children components
-    const isLoggedUser = (requestedUserId === authenticatedUserId)
+    const isLoggedUser = requestedUserId === authenticatedUserId;
 
     // check if any errors occur during the loading of userprofile page
     // if so, we'll redirect to NotFound page
-    const error = useSelector(state => state.profile.hasError)
-    
+    const { hasError, isLoading } = useSelector((state) => state.profile);
+
     useEffect(() => {
         dispatch(fetchProfileDetails(requestedUserId));
     }, [dispatch, authenticatedUserId, requestedUserId]);
 
-    if (error){
-        return <NotFound />
+    if (hasError) {
+        return <NotFound />;
     }
     return (
         <React.Fragment>
             <Header />
             <main className="userprofile-page">
-                <UserInfo isLoggedUser={isLoggedUser}/>
-                <UserPicturesList />
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : (
+                    <React.Fragment>
+                        <UserInfo isLoggedUser={isLoggedUser} />
+                        <UserPicturesList />
+                    </React.Fragment>
+                )}
             </main>
             <Footer />
         </React.Fragment>

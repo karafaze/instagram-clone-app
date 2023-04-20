@@ -4,6 +4,20 @@ const User = require("../models/user");
 const path = require("path");
 
 exports.login = (req, res) => {
+    if (req.body.username === '' ){
+        return res.status(400).json({
+            status: 'FAILED',
+            field: 'username',
+            error: 'You need to enter a username'
+        })
+    }
+    if (req.body.password === '' ){
+        return res.status(400).json({
+            status: 'FAILED',
+            field: 'password',
+            error: 'No password ?'
+        })
+    }
     // we first check in the database if the user already exists
     User.findOne({ username: req.body.username })
         .then((user) => {
