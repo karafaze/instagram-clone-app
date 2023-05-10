@@ -50,6 +50,7 @@ exports.getUserByName = (req, res) => {
 }
 
 exports.editUserProfile = (req, res) => {
+    console.log(req.files.avatar[0])
     // check if another user is trying to modify another account
     if (req.auth.userId !== req.params.userId) {
         return res.status(401).json({
@@ -66,7 +67,7 @@ exports.editUserProfile = (req, res) => {
                 updates[key] = req.body[key];
             }
             // if user sent a file to modify its profile picture
-            if (req.file) {
+            if (req.files) {
                 // we first initialize oldAvatarPath with value = null
                 let oldAvatarPath = null;
                 // now we check if the user is still using the picture by default assigned
@@ -81,7 +82,7 @@ exports.editUserProfile = (req, res) => {
                 // we add to updates object the new avatarUrl for incoming picture
                 updates["avatarUrl"] = `${req.protocol}://${req.get(
                     "host"
-                )}/uploads/${req.file.filename}`;
+                )}/uploads/${req.files.avatar[0].filename}`;
                 // below we update user with updates object and
                 // make sure we delete the previous picture from storage
                 User.findOneAndUpdate({ _id: req.params.userId }, updates)

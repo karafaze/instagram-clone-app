@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const path = require("path");
 
 exports.login = (req, res) => {
     if (req.body.username === '' ){

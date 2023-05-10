@@ -34,7 +34,7 @@ export default function EditFormFile({
                         className="selectfile-wrapper--preview"
                         onClick={handleFileClick}
                     >
-                        <i className="ri-emotion-happy-line"></i>
+                        <i className="ri-image-add-line"></i>
                     </div>
                 )}
             </div>

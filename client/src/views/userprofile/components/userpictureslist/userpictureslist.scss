@@ -1,0 +1,31 @@
+.userpictures {
+    margin-top: 1em;
+    margin-bottom: 3.5em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    justify-items: center;
+    align-items: center;
+    gap: .1em;
+    width: 100%;
+}
+.userpictures--wrapper{
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.userpictures--picture{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.picture {
+    border: .1px solid black;
+    width: 100%;
+    max-width: 450px;
+    height: 150px;
+    /* width: 100px;
+    height: 100px; */
+}

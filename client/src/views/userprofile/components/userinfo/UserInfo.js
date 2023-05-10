@@ -34,7 +34,7 @@ export default function UserInfo({isLoggedUser}) {
                         <Link to={`${location.pathname}/edit`}>Edit profile</Link>
                     </div>
                     <div className="userinfo--options__create-post">
-                        <Link to={`${location.pathname}`}>Create post</Link>
+                        <Link to={`${location.pathname}/addpost`}>Create post</Link>
                     </div>
                 </div>
             )}
