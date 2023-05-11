@@ -3,8 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getItemsFromLocalStorage } from "../utils/localStorageToken";
 import { fetchLoggedUserDetails } from "../redux/actions/loggedUserActions";
+import { fetchLoggedUserPostData } from "../redux/actions/loggedUserPostAction";
 
 import UserProfile from "../views/userprofile/UserProfile";
+import ProfileFeed from "../views/profilefeed/ProfileFeed";
 import Feed from "../views/feed/Feed";
 import NotFound from "../views/notfound/NotFound";
 import EditUser from "../views/edituser/EditUser";
@@ -17,10 +19,12 @@ export default function PrivateRoutes() {
     useEffect(() => {
         const { userId } = getItemsFromLocalStorage();
         dispatch(fetchLoggedUserDetails(userId));
+        dispatch(fetchLoggedUserPostData())
     }, [dispatch]);
     return (
         <Routes>
             <Route path="/:userId" element={<UserProfile />} />
+            <Route path="/:userId/all" element={<ProfileFeed />}/>
             <Route path="/:userId/feed" element={<Feed />} />
             <Route path="/:userId/edit" element={<EditUser />} />
             <Route path="/:userId/follow" element={<UserFollowStat />} />

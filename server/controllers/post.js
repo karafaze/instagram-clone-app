@@ -33,8 +33,7 @@ exports.createPost = (req, res) => {
 };
 
 exports.getAllPosts = (req, res) => {
-    console.log('recevied')
-    Post.find({owner: req.auth.userId})
+    Post.find({owner: req.params.userId})
         .then(posts => {
             if (!posts){
                 return res.status(400).json({
@@ -42,7 +41,6 @@ exports.getAllPosts = (req, res) => {
                     message: 'No posts linked to this account'
                 })
             }
-            console.log(posts)
             return res.status(200).json({
                 status: 'OK',
                 data: posts
@@ -51,7 +49,7 @@ exports.getAllPosts = (req, res) => {
         .catch(err => {
             return res.status(500).json({
                 status:'FAILED',
-                message: 'Error occured on the server side'
+                message: 'Error : ' + err 
             })
         })
 }

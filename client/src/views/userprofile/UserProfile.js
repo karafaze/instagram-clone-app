@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfileDetails } from "../../redux/actions/profileActions";
+import {fetchProfilePostData} from '../../redux/actions/profilePostAction'
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
 import NotFound from "../../views/notfound/NotFound";
@@ -30,6 +31,7 @@ export default function UserProfile() {
 
     useEffect(() => {
         dispatch(fetchProfileDetails(requestedUserId));
+        dispatch(fetchProfilePostData(requestedUserId))
     }, [dispatch, authenticatedUserId, requestedUserId]);
 
     if (hasError) {

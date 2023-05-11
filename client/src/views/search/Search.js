@@ -13,13 +13,13 @@ import "./search.scss";
 
 export default function Search() {
     const [query, setQuery] = useState("");
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const [queryData, setQueryData] = useState(null);
     const [queryError, setQueryError] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true)
+        setIsLoading(true);
         const { token } = getItemsFromLocalStorage();
         fetch(`/user/search/${query}`, {
             headers: {
@@ -38,9 +38,8 @@ export default function Search() {
                         setQueryError(result.message);
                         setQueryData(null);
                     }
-                    setIsLoading(false)
-                }, 2000)
-
+                    setIsLoading(false);
+                }, 2000);
             })
             .catch((err) => {
                 console.log(err);
@@ -50,24 +49,27 @@ export default function Search() {
 
     return (
         <React.Fragment>
+            <HeaderBack>
+                <SearchForm
+                    handleSubmit={handleSubmit}
+                    query={query}
+                    setQuery={setQuery}
+                />
+            </HeaderBack>
             <main className="search-page">
-                <HeaderBack>
-                    <SearchForm 
-                        handleSubmit={handleSubmit}
-                        query={query}
-                        setQuery={setQuery}
-                    />
-                </HeaderBack>
                 <section className="search-page--result">
-                    { isLoading ? (
+                    {isLoading ? (
                         <LoadingSpinner />
                     ) : (
                         <React.Fragment>
-                            {queryData && <UserQueryList userList={queryData} />}
-                            {queryError && <UserQueryError message={queryError} />}
+                            {queryData && (
+                                <UserQueryList userList={queryData} />
+                            )}
+                            {queryError && (
+                                <UserQueryError message={queryError} />
+                            )}
                         </React.Fragment>
                     )}
-
                 </section>
             </main>
             <Footer />
