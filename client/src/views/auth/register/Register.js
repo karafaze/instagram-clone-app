@@ -53,7 +53,7 @@ export default function Register() {
                     setFormError(formatErrorsToFormError(data.errors, formData))
                 }
                 if (data.status === 'OK'){
-                    navigate(`/photowall/${formData.username}`)
+                    navigate("/login")
                 }
             })
             .catch((err) => console.log(err));

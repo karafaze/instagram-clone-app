@@ -5,9 +5,25 @@ const Post = new Schema(
     {
         title: { type: String, required: true },
         description: { type: String },
-        owner: { type: String },
-        likes: { type: Array, default: [] },
-        comments: { type: Array, default: [] },
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        likes: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            default: []
+        }],
+        comments: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            default: []
+         }],
         pictureUrl: { type: String, required: true },
     },
     { timestamps: true }

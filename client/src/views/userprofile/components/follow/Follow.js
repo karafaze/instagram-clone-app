@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfileFollow } from "../../../../redux/actions/profileActions";
+import {updateProfileFollow, updateProfileUnfollow } from "../../../../redux/actions/profileActions";
 
 import "./follow.scss";
 
@@ -9,23 +9,24 @@ export default function Follow() {
     const loggedUser = useSelector((state) => state.loggedUser.userData);
     const dispatch = useDispatch();
 
-    const isFollowing = userData?.followedBy?.includes(loggedUser.userId);
+    const isFollowing =
+        userData?.followedBy?.filter((id) => id.user == loggedUser.userId)
+            .length > 0
+            ? true
+            : false;
 
     const handleFollow = async () => {
         // we first disable the span button to prevent multiple calls
-        const followBtn = document.querySelector('#follow')
-        followBtn.classList.add('disabled-btn');
-
-        if (isFollowing) {
-            // will unfollow
-            await dispatch(fetchProfileFollow(userData.userId, -1, loggedUser.userId))
-        } else {
-            // will follow
-            await dispatch(fetchProfileFollow(userData.userId, 1, loggedUser.userId))
-        }
+        const followBtn = document.querySelector("#follow");
+        followBtn.classList.add("disabled-btn");
+        await new Promise((resolve) => {
+            isFollowing
+                ? resolve(dispatch(updateProfileUnfollow(userData.userId,loggedUser.userId)))
+                : resolve((dispatch(updateProfileFollow(userData.userId,loggedUser.userId))))
+        });
         // when follow actions have been dealt with in the back-end
         // re-instate clicking option on span button
-        followBtn.classList.remove('disabled-btn')
+        followBtn.classList.remove("disabled-btn");
     };
 
     if (!userData || !loggedUser) return <p>Loading...</p>;

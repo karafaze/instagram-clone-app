@@ -26,42 +26,6 @@ export const getProfileFailure = () => {
     };
 };
 
-export const fetchProfileFollow = (profileUserId, number, loggedUserId) => {
-    return async(dispatch) => {
-        dispatch(getProfile);
-        try {
-            const items = getItemsFromLocalStorage();
-            if (!items.token) {
-                dispatch(getProfileFailure());
-                return;
-            };
-            const {token} = items;
-            const payload = {
-                profileUserId, number, loggedUserId
-            }
-            const response = await fetch(
-                `/user/${profileUserId}/follow`,
-                {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json;charset=utf-8",
-                        "Authorization": `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(payload)
-                }
-            );
-            const data = await response.json();
-            if (data.status === 'OK') {
-                dispatch(getProfileData(data.data));
-            } else {
-                dispatch(getProfileFailure())
-            }
-        } catch(err) {
-            dispatch(getProfileFailure())
-        }
-    }
-}
-
 export const fetchProfileDetails = (userId) => {
     return async (dispatch) => {
         dispatch(getProfile());
@@ -70,22 +34,82 @@ export const fetchProfileDetails = (userId) => {
             if (!items.token) {
                 dispatch(getProfileFailure());
                 return;
-            };
-            const {token} = items;
+            }
+            const { token } = items;
             const response = await fetch(
                 `/user/${userId}`,
                 getAuthorizationHeader(token)
             );
             const data = await response.json();
-            if (data.status === 'FAILED'){
-                dispatch(getProfileFailure())
+            if (data.status === "FAILED") {
+                dispatch(getProfileFailure());
             }
-            if (data.status === 'OK'){
+            if (data.status === "OK") {
                 dispatch(getProfileData(data.data));
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             dispatch(getProfileFailure());
         }
     };
-}
+};
+
+export const updateProfileFollow = (profileUserId, loggedUserId) => {
+    return async (dispatch) => {
+        dispatch(getProfile());
+        try {
+            const items = getItemsFromLocalStorage();
+            if (!items.token) {
+                dispatch(getProfileFailure());
+            }
+            const payload = {
+                profileUserId,
+                loggedUserId,
+            };
+            const response = await fetch(`/user/${profileUserId}/follow`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                    Authorization: `Bearer ${items.token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+            if (data.status === "OK") {
+                dispatch(getProfileData(data.data));
+            }
+        } catch (error) {
+            dispatch(getProfileFailure());
+        }
+    };
+};
+
+export const updateProfileUnfollow = (profileUserId, loggedUserId) => {
+    return async (dispatch) => {
+        dispatch(getProfile());
+        try {
+            const items = getItemsFromLocalStorage();
+            if (!items.token) {
+                dispatch(getProfileFailure());
+            }
+            const payload = {
+                profileUserId,
+                loggedUserId,
+            };
+            const response = await fetch(`/user/${profileUserId}/unfollow`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                    Authorization: `Bearer ${items.token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+            if (data.status === "OK") {
+                dispatch(getProfileData(data.data));
+            }
+        } catch (error) {
+            dispatch(getProfileFailure());
+        }
+    };
+};

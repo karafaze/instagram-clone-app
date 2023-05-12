@@ -5,11 +5,26 @@ const userSchema = new Schema({
     username: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    posts: {type: Array, default: [], required: false},
-    following: {type: Array, default: [], required: false},
-    followedBy: {type: Array, default: [], required: false},
-    bio: {type: String, default: null, required: false},
-    avatarUrl: {type: String, default: null, required: false}
+    posts: [{
+        post: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post",
+        }, 
+    }],
+    following: [{
+        user: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        }, 
+    }],
+    followedBy: [{
+        user: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        }, 
+    }],
+    bio: {type: String, default: null,},
+    avatarUrl: {type: String, default: null,}
 });
 
 module.exports = mongoose.model("User", userSchema);

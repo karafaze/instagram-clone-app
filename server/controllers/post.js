@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const User = require('../models/user');
 
 exports.createPost = (req, res) => {
     if (req.auth.userId !== req.params.userId) {
@@ -10,26 +11,36 @@ exports.createPost = (req, res) => {
     const {title, description = ''} = req.body
     const filename = req.files.postpicture[0].filename
     const imageUrl = `${req.protocol}://${req.get('host')}/pictures/${filename}`;
-    const post = new Post({
-        title: title,
-        description: description,
-        owner: req.auth.userId,
-        likes: [],
-        comments: [],
-        pictureUrl: imageUrl,
-    })
-    post
-        .save()
-        .then(() => {
-            res.status(201).json({
-                message: "Your post has been created !",
-            });
-        })
-        .catch(() =>
-            res.status(500).json({
-                err: "Sorry an error occured during the creation of your post",
+    User.findById({_id: req.auth.userId})
+        .then(user => {
+            if (!user){
+                return res.status(400).json({
+                    status: 'FAILED',
+                    error:'User not found'
+                })
+            };
+            const post = new Post({
+                title: title,
+                description: description,
+                owner: user._id,
+                likes: [],
+                comments: [],
+                pictureUrl: imageUrl,
             })
-        );
+            post
+                .save()
+                .then(() => {
+                    res.status(201).json({
+                        message: "Your post has been created !",
+                    });
+                })
+                .catch(() =>
+                    res.status(500).json({
+                        err: "Sorry an error occured during the creation of your post",
+                    })
+                );
+        })
+
 };
 
 exports.getAllPosts = (req, res) => {

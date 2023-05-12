@@ -3,6 +3,7 @@ import React from "react";
 import "./profilefeedcard.scss";
 
 export default function ProfileFeedCard({ data }) {
+    console.log(data)
     return (
         <div className="card" >
             <div className="card--content">

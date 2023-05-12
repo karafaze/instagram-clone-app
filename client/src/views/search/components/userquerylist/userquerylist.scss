@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     gap: 1em;
+    width: 100%;
     &--usercard{
         text-decoration: none;
         color: #000;
@@ -16,8 +17,10 @@
             font-weight: 600;
         }
         &__avatar{
-            width: 3.5em;
+            width: 4.5em;
+            height: 4.5em;
             border-radius: 50%;
+            object-fit: cover;
         }
     }
 }

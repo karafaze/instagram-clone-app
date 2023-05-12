@@ -3,7 +3,7 @@ const router = express.Router();
 const authentificationCheck = require("../middlewares/jwt-validator");
 const userControllers = require("../controllers/user");
 const multer = require("../middlewares/multer");
-const editUserSchema = require("../models/edituser");
+const editUserSchema = require("../models/modelvalidation/edituser");
 const validateUserInputs = require("../middlewares/signup-validator");
 
 // test used for Postman mainly or accessing all raw users 
@@ -37,11 +37,16 @@ router.get(
 router.get("/search/:username",
     authentificationCheck,
     userControllers.getUserByName)
-    
-router.post(
+
+router.put(
     "/:userId/follow",
     authentificationCheck,
-    userControllers.editUserFollow
+    userControllers.addFollow
+);
+router.put(
+    "/:userId/unfollow",
+    authentificationCheck,
+    userControllers.removeFollow
 );
 
 router.put(

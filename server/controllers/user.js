@@ -20,37 +20,39 @@ exports.getUserById = (req, res) => {
 };
 
 exports.getUserByName = (req, res) => {
-    const {username} = req.params;
+    const { username } = req.params;
     // retrieve list of users containing username constant with regular expressions
-    User.find({ username: new RegExp(username)})
-        .then(users => {
+    User.find({ username: new RegExp(username) })
+        .then((users) => {
             // if list is empty
             // still send good status code with failure message
-            if (users.length === 0){
+            if (users.length === 0) {
                 return res.status(200).json({
-                    status: 'FAILED',
-                    message: 'User not found. Try typing something else...'
-                })
+                    status: "FAILED",
+                    message: "User not found. Try typing something else...",
+                });
             }
-            // filter out own user from the list 
-            let userList = users.filter(user => String(user._id) !== req.auth.userId)
+            // filter out own user from the list
+            let userList = users.filter(
+                (user) => String(user._id) !== req.auth.userId
+            );
             // format users data to be sent to front-end
-            userList = getFormattedSearchUserData(userList)
+            userList = getFormattedSearchUserData(userList);
             return res.status(200).json({
-                status:'OK',
-                data: userList
-            })
+                status: "OK",
+                data: userList,
+            });
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({
-                status:'FAILED',
-                message: 'An error ocurred on the server-side. Please try again.'
-            })
-        })
-}
+                status: "FAILED",
+                message:
+                    "An error ocurred on the server-side. Please try again.",
+            });
+        });
+};
 
 exports.editUserProfile = (req, res) => {
-    console.log(req.files.avatar[0])
     // check if another user is trying to modify another account
     if (req.auth.userId !== req.params.userId) {
         return res.status(401).json({
@@ -128,144 +130,96 @@ exports.editUserProfile = (req, res) => {
         });
 };
 
-exports.editUserFollow = (req, res) => {
+exports.addFollow = async (req, res) => {
     // retrieve parameters from req.body
-    const { profileUserId, number, loggedUserId } = req.body;
+    const { profileUserId, loggedUserId } = req.body;
     // make sure they are included in the request
-    if (!profileUserId || !number || !loggedUserId) {
+    if (!profileUserId || !loggedUserId) {
         return res.status(400).json({
             status: "FAILED",
             error: "Missing required parameters.",
         });
     }
-
-    // we first make sure both users exists in DB beforehand
-    User.find({
-        _id: {
-            $in: [profileUserId, loggedUserId],
-        },
-    })
-        .then((userArray) => {
-            // if we don't have two users in array : it means one or more id failed
-            if (userArray.length !== 2) {
-                return res.status(400).json({
-                    status: "FAILED",
-                    error: "One or more users we not found in the database. Have you inserted the right id's?",
-                });
-            }
-            // else we go on and look for the profile user in DB
-            User.findOne({ _id: profileUserId })
-                .then((user) => {
-                    // we first look for the loggedUser in the 
-                    // profile user followedBy array
-                    const existingUser = user.followedBy.find(
-                        (userId) => userId === loggedUserId
-                    );
-                    // if loggedUser wishes to follow, he must not be in the array yet
-                    if (number === 1 && existingUser) {
-                        return res.status(403).json({
-                            status: "FAILED",
-                            error: "User already followed.",
-                        });
-                    }
-                    // if he wished to unfollow, he must be in the array
-                    if (number === -1 && !existingUser) {
-                        return res.status(403).json({
-                            status: "FAILED",
-                            error: "User not followed yet.",
-                        });
-                    }
-
-                    // now we can finally update the users array
-                    if (number === 1) {
-                        // for a follow, we add logged user to array 
-                        User.findOneAndUpdate(
-                            { _id: profileUserId },
-                            { $push: { followedBy: loggedUserId } },
-                            { new: true }
-                        )
-                            .then((updatedUser) => {
-                                // then we update loggedUser following array to include profile user
-                                User.findOneAndUpdate(
-                                    { _id: loggedUserId },
-                                    { $push: { following: profileUserId } }
-                                )
-                                    .then(() => {
-                                        // if successfull, we return the formatted user object to be user by front
-                                        const userData =
-                                            getFormattedProfileUserData(updatedUser);
-                                        return res.status(200).json({
-                                            status: "OK",
-                                            data: userData,
-                                        });
-                                    })
-                                    .catch((err) => {
-                                        return res.status(500).json({
-                                            status: "FAILED",
-                                            error: err.message,
-                                        });
-                                    });
-                            })
-                            .catch((err) => {
-                                return res.status(500).json({
-                                    status: "FAILED",
-                                    error: err.message,
-                                });
-                            });
-                    } else if (number === -1) {
-                        // same operations occur here but we're pull instead of pushing
-                        User.findOneAndUpdate(
-                            { _id: profileUserId },
-                            { $pull: { followedBy: loggedUserId } },
-                            { new: true }
-                        )
-                            .then((updatedUser) => {
-                                User.findOneAndUpdate(
-                                    { _id: loggedUserId },
-                                    { $pull: { following: profileUserId } }
-                                )
-                                    .then(() => {
-                                        const userData =
-                                            getFormattedProfileUserData(updatedUser);
-                                        return res.status(200).json({
-                                            status: "OK",
-                                            data: userData,
-                                        });
-                                    })
-                                    .catch((err) => {
-                                        return res.status(500).json({
-                                            status: "FAILED",
-                                            error: err.message,
-                                        });
-                                    });
-                            })
-                            .catch((err) => {
-                                return res.status(500).json({
-                                    status: "FAILED",
-                                    error: err.message,
-                                });
-                            });
-                    } else {
-                        // here we handle the case where neither 1 nor -1 were sent by the front end
-                        return res.status(400).json({
-                            status: "FAILED",
-                            error: "The request was not treated successfully. To fix it, make sure you sent the right parameters.",
-                        });
-                    }
-                })
-                .catch((err) => {
-                    return res.status(500).json({
-                        status: "FAILED",
-                        error: err.message,
-                    });
-                });
+    const profileUserDB = await User.findOne({_id: profileUserId})
+    const loggedUserDB = await User.findOne({_id: loggedUserId})
+    if (!profileUserDB || !loggedUserDB){
+        return res.status(400).json({
+            status:'FAILED',
+            error: "One or more users we not found in the database. Have you inserted the right id's?"
         })
-        .catch((err) => {
-            return res.status(500).json({
-                status: "FAILED",
-                error: err.message,
-            });
+    }
+
+    const existing = profileUserDB.followedBy.find(id => id.user.toString() == loggedUserId)
+
+    if (existing){
+        return res.status(400).json({
+            status: 'FAILED',
+            error: 'User already followed.'
+        })}
+
+    profileUserDB.followedBy.unshift({user: loggedUserDB._id})
+    const updatedProfileUser = await profileUserDB.save()
+    loggedUserDB.following.unshift({user : profileUserDB._id})
+    const updatedLoggedUser = await loggedUserDB.save()
+    
+    if (updatedLoggedUser && updatedProfileUser){
+        return res.status(200).json({
+            status: 'OK',
+            data: getFormattedProfileUserData(updatedProfileUser)
+        })
+    } else {
+        return res.status(500).json({
+            status: 'FAILED',
+            error: 'An error occured on the server-side'
+        })
+    }
+};
+
+exports.removeFollow = async (req, res) => {
+    // retrieve parameters from req.body
+    const { profileUserId, loggedUserId } = req.body;
+    // make sure they are included in the request
+    if (!profileUserId || !loggedUserId) {
+        return res.status(400).json({
+            status: "FAILED",
+            error: "Missing required parameters.",
         });
+    }
+    const profileUserDB = await User.findOne({_id: profileUserId})
+    const loggedUserDB = await User.findOne({_id: loggedUserId})
+    if (!profileUserDB || !loggedUserDB){
+        return res.status(400).json({
+            status:'FAILED',
+            error: "One or more users we not found in the database. Have you inserted the right id's?"
+        })
+    }
+
+    const existing = profileUserDB.followedBy.find(id => id.user.toString() == loggedUserId)
+
+    if (!existing){
+        return res.status(400).json({
+            status: 'FAILED',
+            error: 'User not followed yet.'
+        })}
+    
+    let indexToRemove = profileUserDB.followedBy.map(id => id.user.toString().indexOf(loggedUserId))
+    profileUserDB.followedBy.splice(indexToRemove, 1)
+    const updatedProfileUser = await profileUserDB.save()
+    indexToRemove = loggedUserDB.following.map(id => id.user.toString().indexOf(profileUserId))
+    loggedUserDB.following.splice(indexToRemove, 1)
+    const updatedLoggedUser = await loggedUserDB.save()
+    
+    if (updatedLoggedUser && updatedProfileUser){
+        return res.status(200).json({
+            status: 'OK',
+            data: getFormattedProfileUserData(updatedProfileUser)
+        })
+    } else {
+        return res.status(500).json({
+            status: 'FAILED',
+            error: 'An error occured on the server-side'
+        })
+    }
 };
 
 // utils functions to be used above
@@ -285,13 +239,13 @@ const getFormattedProfileUserData = (userObject) => {
 };
 
 function getFormattedSearchUserData(arr) {
-    return arr.map(user => {
+    return arr.map((user) => {
         return {
             username: user.username,
             userId: user._id,
             avatarUrl: user.avatarUrl,
             followedBy: user.followedBy,
             following: user.following,
-        }
-    })
+        };
+    });
 }
