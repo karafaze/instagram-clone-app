@@ -12,7 +12,9 @@
             font-weight: 600;
         }
         &__avatar{
-            width: 3.5em;
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
             border-radius: 50%;
         }
     }

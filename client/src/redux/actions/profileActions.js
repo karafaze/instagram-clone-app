@@ -70,7 +70,7 @@ export const updateProfileFollow = (profileUserId, loggedUserId) => {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
-                    Authorization: `Bearer ${items.token}`,
+                    "Authorization": `Bearer ${items.token}`,
                 },
                 body: JSON.stringify(payload),
             });

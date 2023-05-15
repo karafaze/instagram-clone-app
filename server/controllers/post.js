@@ -54,7 +54,7 @@ exports.getAllPosts = (req, res) => {
             }
             return res.status(200).json({
                 status: 'OK',
-                data: posts
+                data: formatPostListData(posts)
             })
         })
         .catch(err => {
@@ -63,4 +63,62 @@ exports.getAllPosts = (req, res) => {
                 message: 'Error : ' + err 
             })
         })
+}
+
+exports.addLikeToPost = async (req, res) => {
+    const {userId, postId} = req.body;
+    const post = await Post.findOne({_id: postId})
+    const user = await User.findById({_id: userId})
+    let existing = post.likes.find(id => id.user.toString() == user._id.toString())
+    if (existing){
+        return res.status(400).json({
+            status :'FAILED',
+            error: 'You already like this post'
+        })
+    }
+    post.likes.unshift({user: user._id})
+    await post.save()
+    res.status(200).json({
+        status: 'OK',
+        data : formatPostData(post)
+    })
+}
+
+exports.removeLikeFromPost = async (req, res) => {
+    const {userId, postId} = req.body;
+    const post = await Post.findOne({_id: postId})
+    const user = await User.findById({_id: userId})
+    const existing = post.likes.find(id => id.user.toString() == user._id.toString())
+    if (!existing){
+        return res.status(400).json({
+            status :'FAILED',
+            error: 'You need to like the post first'
+        })
+    }
+
+    const removeIndex = post.likes.map(id => id.user.toString().indexOf(userId))
+    post.likes.splice(removeIndex, 1)
+    await post.save()
+    res.status(200).json({
+        status: 'OK',
+        data: formatPostData(post)
+    })
+}
+
+function formatPostListData(postList) {
+    return postList.map(post => formatPostData(post))
+}
+
+function formatPostData(post) {
+    return {
+        _id: post._id,
+        title: post.title,
+        description: post.description,
+        owner: post.owner,
+        likes: post.likes.map(id => id.user),
+        comments: post.likes.map(id => id.user),
+        pictureUrl: post.pictureUrl,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt
+    }
 }

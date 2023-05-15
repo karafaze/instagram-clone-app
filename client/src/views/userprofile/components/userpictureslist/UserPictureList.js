@@ -4,25 +4,14 @@ import { useSelector } from "react-redux";
 import Picture from "../picture/Picture";
 
 export default function UserPicturesList() {
-    const [isScrolling, setIsScrolling] = useState(false)
     const picturesList = useSelector((state) => state.profilePost.data);
-    
-    const listStyle = {
-        gridTemplateColumns: isScrolling ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)',
-        gap: isScrolling ? "1em" : ".1em",
-    }
-
-    const toggleScroll = () => {
-        setIsScrolling(prevState => !prevState)
-    }
 
     const renderPost = (pictureList) => {
-        return pictureList.map(picture => {
+        return pictureList?.map(picture => {
             return <Picture 
                         key={picture._id} 
-                        src={picture.pictureUrl} 
-                        isScrolling={isScrolling}
-                        toggleScroll={toggleScroll}/>
+                        src={picture.pictureUrl}
+                    />
         })
     }
 
@@ -30,7 +19,7 @@ export default function UserPicturesList() {
         return <span>Loading pictures...</span>;
     } else {
         return (
-            <section style={listStyle} className="userpictures">
+            <section className="userpictures">
                 {renderPost(picturesList)}
             </section>
         );

@@ -9,11 +9,7 @@ export default function Follow() {
     const loggedUser = useSelector((state) => state.loggedUser.userData);
     const dispatch = useDispatch();
 
-    const isFollowing =
-        userData?.followedBy?.filter((id) => id.user == loggedUser.userId)
-            .length > 0
-            ? true
-            : false;
+    const isFollowing = userData?.followedBy?.includes(loggedUser.userId)
 
     const handleFollow = async () => {
         // we first disable the span button to prevent multiple calls

@@ -1,30 +1,59 @@
-import React from "react";
-
+import React, {useState, useEffect} from "react";
+import { getItemsFromLocalStorage } from "../../../../utils/localStorageToken";
+import CardPicture from "./CardPicture";
+import CardLike from "./CardLike";
+import CardComment from "./CardComment";
+import CardLikedBy from "./CardLikedBy";
 import "./profilefeedcard.scss";
 
 export default function ProfileFeedCard({ data }) {
-    console.log(data)
+    const [users, setUsers] = useState([]);
+    useEffect(() => {
+        if (data.likes.length > 0){
+            const { token } = getItemsFromLocalStorage();
+            const urls = data.likes?.map((id) => {
+                return fetch(`/user/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            });
+            Promise.all(urls)
+                .then(responses => Promise.all(responses.map((res) => res.json()))
+                )
+                .then(results => {
+                    let updatedList = [];
+                    results.forEach((user) => {
+                        if (user.status === "OK") {
+                            updatedList.push(user.data);
+                        } else {
+                            setUsers(null);
+                            throw Error("Something went wrong");
+                        }
+                    })
+                    setUsers(updatedList);
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }, [data.likes])
+
     return (
-        <div className="card" >
+        <div className="card">
             <div className="card--content">
-                <img className="card--content__img" src={data.pictureUrl} />
+                <CardPicture src={data.pictureUrl} />
             </div>
             <div className="card--bottom">
                 <div className="card--bottom__cta">
-                    <div className="cta-like">
-                        <i className="ri-heart-line"></i>
-                    </div>
-                    <div className="cta-comment">
-                        <i className="ri-chat-1-line"></i>
-                    </div>
+                    <CardLike likes={data.likes} postId={data._id} />
+                    <CardComment comments={data.comments} />
                 </div>
-                <div className="card--bottom__likes">
-                    <div className="userlike-wrapper"></div>
-                    <p className="userlike-by">
-                        Liked by <span>peter</span> and
-                        <span>others</span>
-                    </p>
-                </div>
+                {data.likes.length > 0 ? (
+                    <div className="card--bottom__likes">
+                        <CardLikedBy likes={data.likes} users={users}/>
+                    </div>
+                ) : null}
                 <div className="card--bottom__comments">
                     <div className="comment">
                         <h3 className="comment--author">markus</h3>

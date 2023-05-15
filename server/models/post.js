@@ -15,14 +15,12 @@ const Post = new Schema(
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
-            default: []
         }],
         comments: [{
             user: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
-            default: []
          }],
         pictureUrl: { type: String, required: true },
     },

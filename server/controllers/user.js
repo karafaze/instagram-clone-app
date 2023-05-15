@@ -6,6 +6,7 @@ exports.getUserById = (req, res) => {
     User.findOne({ _id: req.params.userId })
         .then((user) => {
             const userData = getFormattedProfileUserData(user);
+            console.log(userData)
             res.status(200).json({
                 status: "OK",
                 data: userData,
@@ -230,22 +231,22 @@ const getFormattedProfileUserData = (userObject) => {
         avatarUrl: userObject.avatarUrl,
         bio: userObject.bio,
         followedByLength: userObject.followedBy.length,
-        followedBy: userObject.followedBy,
+        followedBy: userObject.followedBy.map(id => id.user.toString()),
         followingLength: userObject.following.length,
-        following: userObject.following,
+        following: userObject.following.map(id => id.user.toString()),
         postsLength: userObject.posts.length,
         posts: userObject.posts,
     };
 };
 
-function getFormattedSearchUserData(arr) {
+const getFormattedSearchUserData = (arr) => {
     return arr.map((user) => {
         return {
             username: user.username,
             userId: user._id,
             avatarUrl: user.avatarUrl,
-            followedBy: user.followedBy,
-            following: user.following,
+            followedBy: user.followedBy.map(id => id.user.toString()),
+            following: user.following.map(id => id.user.toString()),
         };
     });
 }
