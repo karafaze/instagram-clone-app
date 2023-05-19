@@ -6,7 +6,6 @@ exports.getUserById = (req, res) => {
     User.findOne({ _id: req.params.userId })
         .then((user) => {
             const userData = getFormattedProfileUserData(user);
-            console.log(userData)
             res.status(200).json({
                 status: "OK",
                 data: userData,
@@ -52,6 +51,33 @@ exports.getUserByName = (req, res) => {
             });
         });
 };
+
+exports.getFeedData = (req, res) => {
+    User.findById({_id: req.params.userId})
+        .then(user => {
+            if (!user){
+                return res.status(400).json({
+                    status:'FAILED',
+                    error: 'User not found'
+                })
+            }
+            const userData = {
+                username: user.username,
+                avatarUrl: user.avatarUrl,
+                userId: user._id
+            }
+            return res.status(200).json({
+                status: 'OK',
+                data: userData
+            })
+        })
+        .catch(err => {
+            return res.status(500).json({
+                status: "FAILED",
+                error: err.message,
+            })
+        })
+}
 
 exports.editUserProfile = (req, res) => {
     // check if another user is trying to modify another account

@@ -2,6 +2,7 @@ import {
     getAuthorizationHeader,
     getItemsFromLocalStorage,
 } from "../../utils/localStorageToken";
+// import { fetchMultipleUserData } from "./profileFeedActions";
 
 export const GET_PROFILE_POST = "GET_PROFILE_POST";
 export const GET_PROFILE_POST_DATA = "GET_PROFILE_POST_DATA";
@@ -36,8 +37,7 @@ export const getProfilePostFailure = () => {
 
 export function fetchProfilePostData(userId) {
     return async (dispatch) => {
-        console.log('fetching ')
-        dispatch(getProfilePost());
+        // dispatch(getProfilePost());
         try {
             const items = getItemsFromLocalStorage();
             if (!items.token) {
@@ -50,9 +50,11 @@ export function fetchProfilePostData(userId) {
                 getAuthorizationHeader(token)
             );
             const data = await response.json();
-            if (data.status == "OK") {
+
+            if (data.status === "OK") {
+                console.log(data.data)
                 dispatch(getProfilePostData(data.data));
-            } else if (data.status == "FAILED") {
+            } else if (data.status === "FAILED") {
                 dispatch(getProfilePostFailure());
             }
         } catch (err) {
@@ -84,6 +86,7 @@ export function addLikeToPost(userId, postId){
             const data = await response.json();
             if (data.status === "OK") {
                 dispatch(updateProfilePostLike(data.data))
+                dispatch(fetchProfilePostData(data.data.owner))
             } else if (data.status === "FAILED") {
                 dispatch(getProfilePostFailure());
             }
@@ -118,6 +121,8 @@ export function removeLikeFromPost(userId, postId){
             const data = await response.json();
             if (data.status === "OK") {
                 dispatch(updateProfilePostLike(data.data));
+                dispatch(fetchProfilePostData(data.data.owner))
+                // dispatch(fetchMultipleUserData(data.data.likes));
             } else if (data.status === "FAILED") {
                 dispatch(getProfilePostFailure());
             }

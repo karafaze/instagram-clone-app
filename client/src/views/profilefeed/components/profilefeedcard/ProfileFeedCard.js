@@ -1,44 +1,13 @@
-import React, {useState, useEffect} from "react";
-import { getItemsFromLocalStorage } from "../../../../utils/localStorageToken";
+import React from 'react';
+
 import CardPicture from "./CardPicture";
 import CardLike from "./CardLike";
 import CardComment from "./CardComment";
 import CardLikedBy from "./CardLikedBy";
+
 import "./profilefeedcard.scss";
 
 export default function ProfileFeedCard({ data }) {
-    const [users, setUsers] = useState([]);
-    useEffect(() => {
-        if (data.likes.length > 0){
-            const { token } = getItemsFromLocalStorage();
-            const urls = data.likes?.map((id) => {
-                return fetch(`/user/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            });
-            Promise.all(urls)
-                .then(responses => Promise.all(responses.map((res) => res.json()))
-                )
-                .then(results => {
-                    let updatedList = [];
-                    results.forEach((user) => {
-                        if (user.status === "OK") {
-                            updatedList.push(user.data);
-                        } else {
-                            setUsers(null);
-                            throw Error("Something went wrong");
-                        }
-                    })
-                    setUsers(updatedList);
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
-    }, [data.likes])
-
     return (
         <div className="card">
             <div className="card--content">
@@ -51,7 +20,7 @@ export default function ProfileFeedCard({ data }) {
                 </div>
                 {data.likes.length > 0 ? (
                     <div className="card--bottom__likes">
-                        <CardLikedBy likes={data.likes} users={users}/>
+                        <CardLikedBy likes={data.likes}/>
                     </div>
                 ) : null}
                 <div className="card--bottom__comments">

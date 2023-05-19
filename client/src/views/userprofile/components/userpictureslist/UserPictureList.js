@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Picture from "../picture/Picture";
 
 export default function UserPicturesList() {
-    const picturesList = useSelector((state) => state.profilePost.data);
+    const picturesList = useSelector((state) => state.profilePost.data.posts);
 
     const renderPost = (pictureList) => {
         return pictureList?.map(picture => {

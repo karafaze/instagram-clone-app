@@ -5,7 +5,7 @@ import ProfileFeedCard from '../profilefeedcard/ProfileFeedCard';
 import './profilefeedlist.scss';
 
 export default function ProfileFeedList(){
-    const picturesList = useSelector((state) => state.profilePost.data);
+    const picturesList = useSelector((state) => state.profilePost.data.posts);
 
     const renderPost = (picturesList) => {
         return picturesList.map(picture => {

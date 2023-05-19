@@ -52,10 +52,51 @@ exports.getAllPosts = (req, res) => {
                     message: 'No posts linked to this account'
                 })
             }
-            return res.status(200).json({
-                status: 'OK',
-                data: formatPostListData(posts)
-            })
+            const allUsersInLike = posts.map(post => {
+                return post.likes.map(like => like.user.toString())
+            }).flat()
+
+            let uniqueUsersIdInLike = [];
+            for (let userId of allUsersInLike){
+                if (!uniqueUsersIdInLike.includes(userId)){
+                    uniqueUsersIdInLike.push(userId)
+                }
+            }
+            if (uniqueUsersIdInLike.length > 0){
+                User.find({_id: {$in: uniqueUsersIdInLike}})
+                    .then(users => {
+                        let userLikeList = users.map(user => {
+                            return {
+                                username: user.username,
+                                avatarUrl: user.avatarUrl,
+                                userId: user._id.toString()
+                            }
+                        })
+                        const payload = {
+                            posts: formatPostListData(posts),
+                            likes: userLikeList
+                        }
+                        return res.status(200).json({
+                            status: 'OK', 
+                            data: payload
+                        })
+                    })
+                    .catch(err => {
+                        return res.status(500).json({
+                            status: 'FAILED',
+                            error: err.message
+                        })
+                    })
+            } else {
+                const payload = {
+                    posts: formatPostListData(posts),
+                    likes: []
+                }
+                return res.status(200).json({
+                    status: 'OK',
+                    data: payload
+                })
+            }
         })
         .catch(err => {
             return res.status(500).json({

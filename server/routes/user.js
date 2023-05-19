@@ -34,6 +34,11 @@ router.get(
     userControllers.getUserById
 );
 
+router.get("/profilefeed/:userId", 
+    authentificationCheck,
+    userControllers.getFeedData
+);
+
 router.get("/search/:username",
     authentificationCheck,
     userControllers.getUserByName)
