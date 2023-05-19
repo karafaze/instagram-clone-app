@@ -96,7 +96,7 @@ exports.editUserProfile = (req, res) => {
                 updates[key] = req.body[key];
             }
             // if user sent a file to modify its profile picture
-            if (req.files) {
+            if (req.files[0]) {
                 // we first initialize oldAvatarPath with value = null
                 let oldAvatarPath = null;
                 // now we check if the user is still using the picture by default assigned

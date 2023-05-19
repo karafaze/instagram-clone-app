@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getItemsFromLocalStorage } from "../utils/localStorageToken";
 import { fetchLoggedUserDetails } from "../redux/actions/loggedUserActions";
-import { fetchLoggedUserPostData } from "../redux/actions/loggedUserPostAction";
 
 import UserProfile from "../views/userprofile/UserProfile";
 import ProfileFeed from "../views/profilefeed/ProfileFeed";
@@ -19,7 +18,6 @@ export default function PrivateRoutes() {
     useEffect(() => {
         const { userId } = getItemsFromLocalStorage();
         dispatch(fetchLoggedUserDetails(userId));
-        dispatch(fetchLoggedUserPostData())
     }, [dispatch]);
     return (
         <Routes>

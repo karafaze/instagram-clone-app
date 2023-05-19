@@ -1,17 +1,7 @@
-import {
-    getAuthorizationHeader,
-    getItemsFromLocalStorage,
-} from "../../utils/localStorageToken";
+import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
-export const GET_PROFILE = "GET_PROFILE";
 export const GET_PROFILE_DATA = "GET_PROFILE_DATA";
 export const GET_PROFILE_FAILURE = "GET_PROFILE_FAILURE";
-
-export const getProfile = () => {
-    return {
-        type: GET_PROFILE,
-    };
-};
 
 export const getProfileData = (data) => {
     return {
@@ -28,18 +18,18 @@ export const getProfileFailure = () => {
 
 export const fetchProfileDetails = (userId) => {
     return async (dispatch) => {
-        dispatch(getProfile());
         try {
             const items = getItemsFromLocalStorage();
             if (!items.token) {
                 dispatch(getProfileFailure());
                 return;
             }
-            const { token } = items;
-            const response = await fetch(
-                `/user/${userId}`,
-                getAuthorizationHeader(token)
-            );
+            const response = await fetch(`/user/${userId}`, {
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                    Authorization: `Bearer ${items.token}`,
+                },
+            });
             const data = await response.json();
             if (data.status === "FAILED") {
                 dispatch(getProfileFailure());
@@ -48,7 +38,6 @@ export const fetchProfileDetails = (userId) => {
                 dispatch(getProfileData(data.data));
             }
         } catch (err) {
-            console.log(err);
             dispatch(getProfileFailure());
         }
     };
@@ -56,7 +45,6 @@ export const fetchProfileDetails = (userId) => {
 
 export const updateProfileFollow = (profileUserId, loggedUserId) => {
     return async (dispatch) => {
-        dispatch(getProfile());
         try {
             const items = getItemsFromLocalStorage();
             if (!items.token) {
@@ -70,7 +58,7 @@ export const updateProfileFollow = (profileUserId, loggedUserId) => {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
-                    "Authorization": `Bearer ${items.token}`,
+                    Authorization: `Bearer ${items.token}`,
                 },
                 body: JSON.stringify(payload),
             });
@@ -78,7 +66,10 @@ export const updateProfileFollow = (profileUserId, loggedUserId) => {
             if (data.status === "OK") {
                 dispatch(getProfileData(data.data));
             }
-        } catch (error) {
+            if (data.status === "FAILED") {
+                dispatch(getProfileFailure());
+            }
+        } catch (err) {
             dispatch(getProfileFailure());
         }
     };
@@ -86,16 +77,18 @@ export const updateProfileFollow = (profileUserId, loggedUserId) => {
 
 export const updateProfileUnfollow = (profileUserId, loggedUserId) => {
     return async (dispatch) => {
-        dispatch(getProfile());
         try {
             const items = getItemsFromLocalStorage();
             if (!items.token) {
                 dispatch(getProfileFailure());
+                return;
             }
+
             const payload = {
                 profileUserId,
                 loggedUserId,
             };
+
             const response = await fetch(`/user/${profileUserId}/unfollow`, {
                 method: "PUT",
                 headers: {
@@ -108,7 +101,10 @@ export const updateProfileUnfollow = (profileUserId, loggedUserId) => {
             if (data.status === "OK") {
                 dispatch(getProfileData(data.data));
             }
-        } catch (error) {
+            if (data.status === "FAILED") {
+                dispatch(getProfileFailure());
+            }
+        } catch (err) {
             dispatch(getProfileFailure());
         }
     };

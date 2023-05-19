@@ -16,7 +16,8 @@ export function getAuthorizationHeader(token) {
     // returns authorization Header for fetch call
     return {
         headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json;charset=utf-8 ",
+            "Authorization": `Bearer ${token}`,
         },
     };
 }

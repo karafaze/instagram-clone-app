@@ -28,18 +28,16 @@ export default function Search() {
         })
             .then((res) => res.json())
             .then((result) => {
-                setTimeout(() => {
-                    if (result.status === "OK") {
-                        setQueryData(result.data);
-                        setQueryError(null);
-                    }
-                    if (result.status === "FAILED") {
-                        console.log(result.message);
-                        setQueryError(result.message);
-                        setQueryData(null);
-                    }
-                    setIsLoading(false);
-                }, 2000);
+                if (result.status === "OK") {
+                    setQueryData(result.data);
+                    setQueryError(null);
+                }
+                if (result.status === "FAILED") {
+                    console.log(result.message);
+                    setQueryError(result.message);
+                    setQueryData(null);
+                }
+                setIsLoading(false);
             })
             .catch((err) => {
                 console.log(err);

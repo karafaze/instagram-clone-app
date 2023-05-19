@@ -8,10 +8,6 @@ export const initialState = {
 
 export default function loggedUserReducer(state = initialState, action) {
     switch (action.type) {
-        case actions.GET_LOGGED_USER:
-            return {
-                ...state,
-            };
         case actions.GET_LOGGED_USER_DATA:
             return {
                 userData: action.payload,

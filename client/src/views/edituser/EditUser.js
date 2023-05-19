@@ -15,6 +15,7 @@ import "./edituser.scss";
 export default function EditUser() {
     // data from redux state about logged user
     const userDetail = useSelector((state) => state.loggedUser.userData);
+
     // preview state in case user is changing photos
     const [preview, setPreview] = useState(null)
     // form data 
@@ -23,6 +24,7 @@ export default function EditUser() {
         bio: "",
         avatarUrl: null,
     });
+
     // form error if errors
     const [formError, setFormError] = useState({})
     const navigate = useNavigate();
@@ -143,7 +145,7 @@ export default function EditUser() {
     }
 
     if (!userDetail) {
-        <p>Loading data</p>;
+        return <p>Loading data</p>;
     } else {
         return (
             <React.Fragment>
@@ -215,7 +217,10 @@ function addFieldsToFormData(currentForm, userDetail, finalForm){
         } else {
             // if the key contains avatar and has a value, we append it
             // but make sure we use the "avatar" to be sync with multer
-            if (value) finalForm.append('avatar', value); 
+            if (value) {
+                console.log(value)
+                finalForm.append('avatar', value)
+            }; 
         }
 
     }

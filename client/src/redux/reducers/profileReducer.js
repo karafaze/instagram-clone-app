@@ -8,10 +8,6 @@ export const initialState = {
 
 export default function profileReducer(state = initialState, action) {
     switch (action.type) {
-        case actions.GET_PROFILE:
-            return {
-                ...state,
-            };
         case actions.GET_PROFILE_DATA:
             return {
                 userData: action.payload,
