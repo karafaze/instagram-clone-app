@@ -9,6 +9,7 @@ export default function CardLike({likes, postId}) {
     const loggedUser = useSelector(state => state.loggedUser.userData)
 
     const postLiked = likes.includes(loggedUser.userId)
+
     const updateLike = async () => {
         const likeBtn = document.querySelector(".cta-like");
         likeBtn.classList.add("disabled-btn");

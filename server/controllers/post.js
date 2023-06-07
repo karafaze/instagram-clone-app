@@ -77,7 +77,7 @@ exports.getAllPosts = (req, res) => {
                             likes: userLikeList
                         }
                         return res.status(200).json({
-                            status: 'OK', 
+                            status: 'OK',
                             data: payload
                         })
                     })
@@ -101,15 +101,18 @@ exports.getAllPosts = (req, res) => {
         .catch(err => {
             return res.status(500).json({
                 status:'FAILED',
-                message: 'Error : ' + err 
+                message: 'Error : ' + err
             })
         })
 }
 
 exports.addLikeToPost = async (req, res) => {
     const {userId, postId} = req.body;
+	// get requested post and user objects from DB
     const post = await Post.findOne({_id: postId})
     const user = await User.findById({_id: userId})
+
+	// first check that user does not likes the post yet
     let existing = post.likes.find(id => id.user.toString() == user._id.toString())
     if (existing){
         return res.status(400).json({
@@ -117,7 +120,10 @@ exports.addLikeToPost = async (req, res) => {
             error: 'You already like this post'
         })
     }
+
+	// else we add the user to post likes array
     post.likes.unshift({user: user._id})
+
     await post.save()
     res.status(200).json({
         status: 'OK',
@@ -127,8 +133,11 @@ exports.addLikeToPost = async (req, res) => {
 
 exports.removeLikeFromPost = async (req, res) => {
     const {userId, postId} = req.body;
+	// get requested post and user objects from DB
     const post = await Post.findOne({_id: postId})
     const user = await User.findById({_id: userId})
+
+	// check that user is in post likes array
     const existing = post.likes.find(id => id.user.toString() == user._id.toString())
     if (!existing){
         return res.status(400).json({
@@ -137,8 +146,11 @@ exports.removeLikeFromPost = async (req, res) => {
         })
     }
 
-    const removeIndex = post.likes.map(id => id.user.toString().indexOf(userId))
+	// if he is, we retrieve the index of the user in the array
+	const removeIndex = post.likes.findIndex(userObj => userObj.user.toString() == user._id.toString())
+	// use splice methods to remove it with index
     post.likes.splice(removeIndex, 1)
+
     await post.save()
     res.status(200).json({
         status: 'OK',

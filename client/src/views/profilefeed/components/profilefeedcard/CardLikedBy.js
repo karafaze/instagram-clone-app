@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 
 export default function CardLikedBy({ likes, users }) {
+	console.log('rendering again cardlikeby')
     const userLikesInState = useSelector((state) => state.profilePost.data.likes);
     const loggedUser = useSelector((state) => state.loggedUser.userData);
     const loggedUserIn = likes.includes(loggedUser.userId)
     const userLikes = userLikesInState.filter(user => likes.includes(user.userId))
     if (userLikes.length === 0){
-        return 
+        return
     }
     if (userLikes.length === 1) {
         if (loggedUserIn) {
@@ -17,6 +18,7 @@ export default function CardLikedBy({ likes, users }) {
                         <img
                             className="userlike-picture--solo"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">Liked by <span>you</span></p>
@@ -29,6 +31,7 @@ export default function CardLikedBy({ likes, users }) {
                         <img
                             className="userlike-picture--solo"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">
@@ -45,10 +48,12 @@ export default function CardLikedBy({ likes, users }) {
                         <img
                             className="userlike-picture--duo__1"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--duo__2"
                             src={userLikes[1].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">
@@ -63,10 +68,12 @@ export default function CardLikedBy({ likes, users }) {
                         <img
                             className="userlike-picture--duo__1"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--duo__2"
                             src={userLikes[1].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">
@@ -83,14 +90,17 @@ export default function CardLikedBy({ likes, users }) {
                         <img
                             className="userlike-picture--trio__1"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--trio__2"
                             src={userLikes[1].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--trio__3"
                             src={userLikes[2].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">
@@ -99,21 +109,24 @@ export default function CardLikedBy({ likes, users }) {
                 </React.Fragment>
             )
         } else {
-            const randomIndex = Math.floor(Math.random() * userLikes.length) 
+            const randomIndex = Math.floor(Math.random() * userLikes.length)
             return (
                 <React.Fragment>
                     <div className="userlike-wrapper">
                         <img
                             className="userlike-picture--trio__1"
                             src={userLikes[0].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--trio__2"
                             src={userLikes[1].avatarUrl}
+							alt="description of a user that likes"
                         />
                         <img
                             className="userlike-picture--trio__3"
                             src={userLikes[2].avatarUrl}
+							alt="description of a user that likes"
                         />
                     </div>
                     <p className="userlike-by">
@@ -123,7 +136,7 @@ export default function CardLikedBy({ likes, users }) {
             )
         }
     }
-    return null;
+
     // const userLikes = userLikesInState.filter(user => {
     //     for (let userId of likes){
     //         if (user.userId == userId){
@@ -239,7 +252,7 @@ export default function CardLikedBy({ likes, users }) {
     //             </React.Fragment>
     //         )
     //     } else {
-    //         const randomIndex = Math.floor(Math.random() * userLikes.length) 
+    //         const randomIndex = Math.floor(Math.random() * userLikes.length)
     //         return (
     //             <React.Fragment>
     //                 <div className="userlike-wrapper">

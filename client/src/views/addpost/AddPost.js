@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // import { useSelector } from "react-redux";
 import { getItemsFromLocalStorage } from "../../utils/localStorageToken";
 
@@ -14,6 +14,7 @@ import "./addpost.scss";
 export default function AddPost() {
     const { userId: requestedUserId } = useParams();
     const { userId: authenticatedUserId } = getItemsFromLocalStorage();
+	const navigate = useNavigate();
 
     const [form, setForm] = useState({
         title: "",
@@ -26,30 +27,30 @@ export default function AddPost() {
     // set preview picture
     useEffect(() => {
         if (form.imageUrl == null) {
-            setPreview(null)
-            return
+            setPreview(null);
+            return;
         }
-        const objectUrl = URL.createObjectURL(form.imageUrl)
-        setPreview(objectUrl)
+        const objectUrl = URL.createObjectURL(form.imageUrl);
+        setPreview(objectUrl);
 
-        return () => URL.revokeObjectURL(objectUrl)
-    }, [form.imageUrl])
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [form.imageUrl]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const { token, userId } = getItemsFromLocalStorage("photowall-user");
         let formData = new FormData();
-        formData = addFieldsToFormData(form, formData)
+        formData = addFieldsToFormData(form, formData);
         fetch(`/posts/${userId}`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
             },
             body: formData,
         })
-            .then(res => res.json())
-            .then(message => console.log(message))
-            .catch(err => console.log(err))
+            .then((res) => res.json())
+            .then((message) => console.log(message))
+            .catch((err) => console.log(err));
     };
 
     const handleChange = (e) => {
@@ -73,8 +74,8 @@ export default function AddPost() {
 
     const handleFileClick = (e) => {
         e.preventDefault();
-        document.querySelector('#select-file').click()
-    }
+        document.querySelector("#select-file").click();
+    };
 
     if (requestedUserId !== authenticatedUserId) {
         return <p>This is a private action</p>;
@@ -83,7 +84,23 @@ export default function AddPost() {
         <React.Fragment>
             <Header />
             <main className="addpost-page">
-                <p>Looking to create a new post ?</p>
+                <div className="edituserprofile--top">
+                    <span
+                        onClick={() => navigate(-1)}
+                        className="edituserprofile--top__back"
+                    >
+                        Cancel
+                    </span>
+                    <h1 className="edituserprofile--top__title">
+                        New post
+                    </h1>
+                    <button
+                        className="edituserprofile--top__btn"
+                        onClick={handleSubmit}
+                    >
+                        Done
+                    </button>
+                </div>
                 <form className="addpost-form" onSubmit={handleSubmit}>
                     <AddPostInput
                         id={"addpost-title"}
@@ -101,8 +118,8 @@ export default function AddPost() {
                         value={form.description}
                         handleChange={handleChange}
                     />
-                    <AddPostFile 
-                        handleChange={handleChange} 
+                    <AddPostFile
+                        handleChange={handleChange}
                         handleFileClick={handleFileClick}
                         preview={preview}
                         hasPreview={preview ? true : false}
@@ -115,22 +132,21 @@ export default function AddPost() {
     );
 }
 
-function addFieldsToFormData(currentForm, finalForm){
+function addFieldsToFormData(currentForm, finalForm) {
     // iterate over current form
-    for (const [key, value] of Object.entries(currentForm)){
+    for (const [key, value] of Object.entries(currentForm)) {
         // if the key does not contain avatar
-        if (!key.includes('image')){
+        if (!key.includes("image")) {
             // we check it is not empty or unchanged from the current value
-            if (value !== ""){
+            if (value !== "") {
                 // if it has changed, we append it to the form
-                finalForm.append(key, value)
+                finalForm.append(key, value);
             }
         } else {
             // if the key contains avatar and has a value, we append it
             // but make sure we use the "avatar" to be sync with multer
-            if (value) finalForm.append('postpicture', value); 
+            if (value) finalForm.append("postpicture", value);
         }
-
     }
     return finalForm;
 }

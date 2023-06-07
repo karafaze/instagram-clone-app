@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import "./userpictureslist.scss";
 import { useSelector } from "react-redux";
 import Picture from "../picture/Picture";
@@ -8,8 +8,8 @@ export default function UserPicturesList() {
 
     const renderPost = (pictureList) => {
         return pictureList?.map(picture => {
-            return <Picture 
-                        key={picture._id} 
+            return <Picture
+                        key={picture._id}
                         src={picture.pictureUrl}
                     />
         })
