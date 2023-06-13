@@ -22,9 +22,6 @@
         flex-direction: column;
         justify-content: center;
         gap: .3em;
-        &__description{
-            font-size: .9em;
-        }
         &__cta{
             display: flex;
             flex-direction: row;
@@ -37,6 +34,18 @@
             flex-direction: row;
             align-items: center;
         }
+		&__description{
+			display: flex;
+			flex-direction: row;
+			& > p{
+				font-size: .9em;
+				& > span{
+					font-size: 1em;
+					font-weight: 600;
+				}
+			}
+
+		}
         &__comments{
             display: flex;
             flex-direction: column;
