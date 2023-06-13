@@ -8,6 +8,7 @@ import "./notfound.scss";
 
 export default function NotFound() {
     const navigate = useNavigate()
+
     return (
         <React.Fragment>
             <Header />
@@ -17,7 +18,7 @@ export default function NotFound() {
                     Something went wrong. This page or content does not exists
                     (yet)
                 </p>
-                <span 
+                <span
                     onClick={() => navigate(-1)}
                     className="error-page--goback"
                 >

@@ -3,7 +3,7 @@ import React from 'react';
 import CardPicture from "./CardPicture";
 import CardLike from "./CardLike";
 import CardComment from "./CardComment";
-import CardLikedBy from "./CardLikedBy";
+import CardLikedByWrapper from "./CardLikedByWrapper";
 
 import "./profilefeedcard.scss";
 
@@ -20,10 +20,10 @@ export default function ProfileFeedCard({ data }) {
                 </div>
                 {data.likes.length > 0 ? (
                     <div className="card--bottom__likes">
-                        <CardLikedBy likes={data.likes}/>
+                        <CardLikedByWrapper likes={data.likes}/>
                     </div>
                 ) : null}
-                <div className="card--bottom__comments">
+                {/* <div className="card--bottom__comments">
                     <div className="comment">
                         <h3 className="comment--author">markus</h3>
                         <p className="comment--content">
@@ -32,7 +32,7 @@ export default function ProfileFeedCard({ data }) {
                         <span className="comment--timestamp">1 hour ago</span>
                     </div>
                     <p className="comment--load">View all comments</p>
-                </div>
+                </div> */}
             </div>
         </div>
     );

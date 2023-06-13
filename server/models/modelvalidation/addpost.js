@@ -4,6 +4,7 @@ const schema = [
     body('title')
         .not()
         .isEmpty()
+		.withMessage('You need to add a title')
         .bail()
         .trim()
         .isLength({min:2, max:50})

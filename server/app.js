@@ -18,7 +18,7 @@ mongoose
     )
     .then(() => console.log("Successfully connected to MongoDB."))
     .catch((err) => console.log(`Failed to connect to MongoDB : ${err}.`));
-    
+
 app.use(helmet({
     crossOriginResourcePolicy: false,
   }));

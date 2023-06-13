@@ -95,8 +95,9 @@ exports.editUserProfile = (req, res) => {
             for (const key in req.body) {
                 updates[key] = req.body[key];
             }
+
             // if user sent a file to modify its profile picture
-            if (req.files[0]) {
+            if (req.files.avatar) {
                 // we first initialize oldAvatarPath with value = null
                 let oldAvatarPath = null;
                 // now we check if the user is still using the picture by default assigned
@@ -188,7 +189,7 @@ exports.addFollow = async (req, res) => {
     const updatedProfileUser = await profileUserDB.save()
     loggedUserDB.following.unshift({user : profileUserDB._id})
     const updatedLoggedUser = await loggedUserDB.save()
-    
+
     if (updatedLoggedUser && updatedProfileUser){
         return res.status(200).json({
             status: 'OK',
@@ -228,14 +229,14 @@ exports.removeFollow = async (req, res) => {
             status: 'FAILED',
             error: 'User not followed yet.'
         })}
-    
+
     let indexToRemove = profileUserDB.followedBy.map(id => id.user.toString().indexOf(loggedUserId))
     profileUserDB.followedBy.splice(indexToRemove, 1)
     const updatedProfileUser = await profileUserDB.save()
     indexToRemove = loggedUserDB.following.map(id => id.user.toString().indexOf(profileUserId))
     loggedUserDB.following.splice(indexToRemove, 1)
     const updatedLoggedUser = await loggedUserDB.save()
-    
+
     if (updatedLoggedUser && updatedProfileUser){
         return res.status(200).json({
             status: 'OK',

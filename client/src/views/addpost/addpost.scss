@@ -3,3 +3,40 @@
 .addpost-page{
     padding: 3.5em .5em;
 }
+
+.addpost{
+    &--top{
+        @include flexrow-center;
+        justify-content: space-between;
+        padding: 0 .5em 1em .5em;
+        border-bottom: 1px solid #e2e2e2;
+        &__back{
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        &__title{
+            font-size: 1.1em;
+            font-family: $font-text;
+            font-weight: 700;
+        }
+        &__btn{
+            color: #029dff;
+            border: none;
+            background-color: #fff;
+            font-size: 1.1em;
+            font-family: $font-text;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    }
+    &--page{
+        @include flexcenter;
+    }
+}
+
+.addpost-form{
+    margin-top: .5em;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}

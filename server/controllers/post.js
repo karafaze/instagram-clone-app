@@ -31,11 +31,13 @@ exports.createPost = (req, res) => {
                 .save()
                 .then(() => {
                     res.status(201).json({
+						status: 'OK',
                         message: "Your post has been created !",
                     });
                 })
                 .catch(() =>
                     res.status(500).json({
+						status:'FAILED',
                         err: "Sorry an error occured during the creation of your post",
                     })
                 );
