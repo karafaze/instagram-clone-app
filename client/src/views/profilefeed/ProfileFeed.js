@@ -15,12 +15,13 @@ export default function ProfileFeed() {
     const { userId: requestedUserId } = useParams();
     const dispatch = useDispatch();
     const {hasError, userData, isLoading} = useSelector(state => state.profile)
+
     useEffect(() => {
         dispatch(fetchProfileDetails(requestedUserId))
         dispatch(fetchProfilePostData(requestedUserId))
     }, [requestedUserId, dispatch])
 
-    if (hasError) {
+	if (hasError) {
         return <NotFound />;
     } else if (isLoading){
         return <LoadingSpinner />

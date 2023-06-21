@@ -6,6 +6,19 @@ const postController = require('../controllers/post')
 const addPostSchema = require('../models/modelvalidation/addpost');
 const validateUserInputs = require('../middlewares/signup-validator')
 
+// testing for postman
+const Post = require('../models/post')
+router.get('/all', (req, res) => {
+	Post.find()
+		.then(posts => {
+			return res.json({
+				status: 'OK',
+				posts: posts
+			})
+		})
+})
+
+// official routes
 router.post(
 	"/:userId",
 	authentificationCheck,

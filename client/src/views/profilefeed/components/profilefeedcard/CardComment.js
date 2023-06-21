@@ -1,14 +1,9 @@
 import React from "react";
-// import { useDispatch } from "react-redux";
 
-export default function CardComment({comments}) {
-    // const dispatch = useDispatch();
+export default function CardComment({toggleComments}) {
 
-    const updateComment = () => {
-        console.log('cliked')
-    }
     return (
-        <div onClick={updateComment} className="cta-comment">
+        <div onClick={toggleComments} className="cta-comment">
             <i className="ri-chat-1-line"></i>
         </div>
     );

@@ -12,7 +12,7 @@ export const initialState = {
 export default function profilePostReducer(state = initialState, action) {
     switch (action.type) {
         case actions.GET_PROFILE_POST:
-            return { 
+            return {
                 isLoading: true,
                 hasError: false,
                 data: {
@@ -53,46 +53,3 @@ export default function profilePostReducer(state = initialState, action) {
             return { ...state };
     }
 }
-// export const initialState = {
-//     data: [],
-//     isLoading: true,
-//     hasError: false,
-// };
-
-// export default function profilePostReducer(state = initialState, action) {
-//     switch (action.type) {
-//         case actions.GET_PROFILE_POST:
-//             return { 
-//                 isLoading: true,
-//                 hasError: false,
-//                 ...state,
-//              };
-//         case actions.GET_PROFILE_POST_DATA:
-//             // will need change
-//             return {
-//                 data: action.payload,
-//                 isLoading: false,
-//                 hasError: false,
-//             };
-//         case actions.UPDATE_PROFILE_POST_LIKE:
-//             // will need change
-//             const newData = state.data.map((post) => {
-//                 return post._id === action.payload._id
-//                     ? { ...action.payload }
-//                     : post;
-//             });
-//             return {
-//                 data: newData,
-//                 isLoading: false,
-//                 hasError: false,
-//             };
-//         case actions.GET_PROFILE_POST_FAILURE:
-//             return {
-//                 ...state,
-//                 isLoading: false,
-//                 hasError: true,
-//             };
-//         default:
-//             return { ...state };
-//     }
-// }

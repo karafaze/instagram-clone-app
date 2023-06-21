@@ -52,6 +52,10 @@
             justify-content: center;
             gap: .2em;
         }
+		&__date{
+			font-size: .8em;
+			color: rgba(0,0,0, .5);
+		}
     }
 }
 
@@ -153,4 +157,35 @@
         font-size: .9em;
         cursor: pointer;
     }
+}
+
+
+// comment modal
+.comment-section{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80%;
+	z-index: 10;
+	border-radius: 5px 5px 0 0;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	&--top{
+		flex: .3;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 0 .5em;
+		border-bottom: 1px solid grey;
+	}
+	&--content{
+		flex:1;
+		// background-color: red;
+	}
+	&--edit{
+		flex:1;
+		// background-color: yellow;
+	}
 }

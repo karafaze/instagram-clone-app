@@ -1,22 +1,30 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import ProfileFeedCard from '../profilefeedcard/ProfileFeedCard';
+import React from "react";
+import { useSelector } from "react-redux";
+import ProfileFeedCard from "../profilefeedcard/ProfileFeedCard";
 
-import './profilefeedlist.scss';
+import "./profilefeedlist.scss";
 
-export default function ProfileFeedList(){
+export default function ProfileFeedList() {
     const picturesList = useSelector((state) => state.profilePost.data.posts);
 
     const renderPost = (picturesList) => {
-        return picturesList.map(picture => {
-            return <ProfileFeedCard 
-                        key={picture._id} 
-                        data={picture}
-                        />
-        })
+        return picturesList.map((picture) => {
+            return (
+                <ProfileFeedCard
+                    key={picture._id}
+                    data={picture}
+                />
+            );
+        });
+    };
+    if (!picturesList) {
+        return <span>Loading data...</span>;
     }
-    if (!picturesList){
-        return <span>Loading data...</span>
-    }
-    return renderPost(picturesList)
+    return (
+        <React.Fragment>
+            <section className="posts-container">
+                {renderPost(picturesList)}
+            </section>
+        </React.Fragment>
+    );
 }

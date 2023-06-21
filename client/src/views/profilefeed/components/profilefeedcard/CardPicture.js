@@ -1,10 +1,12 @@
-import React from 'react';
+import React from "react";
 
-export default function CardPicture({src}){
+export default function CardPicture({ src }) {
+
     return (
-        <img 
+        <img
             className="card--content__img"
             src={src}
+            alt="contains the post posted by the user"
         />
-    )
+    );
 }
