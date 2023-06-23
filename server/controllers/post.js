@@ -76,7 +76,8 @@ exports.getAllPosts = (req, res) => {
                         })
                         const payload = {
                             posts: formatPostListData(posts),
-                            likes: userLikeList
+                            likes: userLikeList,
+							comments: [],
                         }
                         return res.status(200).json({
                             status: 'OK',
@@ -92,7 +93,8 @@ exports.getAllPosts = (req, res) => {
             } else {
                 const payload = {
                     posts: formatPostListData(posts),
-                    likes: []
+                    likes: [],
+					comments: [],
                 }
                 return res.status(200).json({
                     status: 'OK',
@@ -171,7 +173,7 @@ function formatPostData(post) {
         description: post.description,
         owner: post.owner,
         likes: post.likes.map(id => id.user),
-        comments: post.likes.map(id => id.user),
+        comments: post.comments.map(id => id.user),
         pictureUrl: post.pictureUrl,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt

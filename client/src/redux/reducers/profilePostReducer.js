@@ -4,6 +4,7 @@ export const initialState = {
     data: {
         posts: [],
         likes: [],
+		comments: [],
     },
     isLoading: true,
     hasError: false,
@@ -17,14 +18,16 @@ export default function profilePostReducer(state = initialState, action) {
                 hasError: false,
                 data: {
                     posts: [...state.data.posts],
-                    likes: [...state.data.likes]
+                    likes: [...state.data.likes],
+					comments: [...state.data.comments],
                 },
              };
         case actions.GET_PROFILE_POST_DATA:
             return {
                 data: {
                     posts: action.payload.posts,
-                    likes: action.payload.likes
+                    likes: action.payload.likes,
+					comments: action.payload.comments,
                 },
                 isLoading: false,
                 hasError: false,
@@ -38,7 +41,8 @@ export default function profilePostReducer(state = initialState, action) {
             return {
                 data: {
                     posts: newPostData,
-                    likes: [...state.data.likes]
+                    likes: [...state.data.likes],
+					comments: [...state.data.comments],
                 },
                 isLoading: false,
                 hasError: false,

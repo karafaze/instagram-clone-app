@@ -11,8 +11,8 @@ import CommentModal from './CommentModal';
 
 import "./profilefeedcard.scss";
 
-export default function ProfileFeedCard({ data }) {
-	// console.log(data)
+export default function ProfileFeedCard({ data, pictureId }) {
+
     const [showComments, setShowComments] = useState(() => {
 		document.body.style.overflow = "";
 		return false;
@@ -33,7 +33,7 @@ export default function ProfileFeedCard({ data }) {
 
     return (
 		<React.Fragment>
-        <div className="card">
+        <div className="card" id={`pic-${pictureId}`}>
             <div className="card--content">
                 <CardPicture src={data.pictureUrl} />
             </div>

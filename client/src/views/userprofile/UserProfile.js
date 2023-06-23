@@ -37,6 +37,7 @@ export default function UserProfile() {
     if (hasError) {
         return <NotFound />;
     }
+
     return (
         <React.Fragment>
             <Header />

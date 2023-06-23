@@ -11,6 +11,7 @@ export default function UserPicturesList() {
             return <Picture
                         key={picture._id}
                         src={picture.pictureUrl}
+						pictureId={picture._id}
                     />
         })
     }
