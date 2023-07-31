@@ -22,6 +22,7 @@ export default function profilePostReducer(state = initialState, action) {
 					comments: [...state.data.comments],
                 },
              };
+
         case actions.GET_PROFILE_POST_DATA:
             return {
                 data: {
@@ -32,6 +33,7 @@ export default function profilePostReducer(state = initialState, action) {
                 isLoading: false,
                 hasError: false,
             };
+
         case actions.UPDATE_PROFILE_POST_LIKE:
             const newPostData = state.data.posts?.map((post) => {
                 return post._id === action.payload._id
@@ -47,12 +49,25 @@ export default function profilePostReducer(state = initialState, action) {
                 isLoading: false,
                 hasError: false,
             };
-        case actions.GET_PROFILE_POST_FAILURE:
+
+        case actions.UPDATE_PROFILE_POST_COMMENT:
+			return {
+				data: {
+					posts: [...state.data.posts],
+					likes: [...state.data.likes],
+					comments: [...state.data.comments, action.payload],
+				},
+				isLoading: false,
+				hasError:false,
+			};
+
+		case actions.GET_PROFILE_POST_FAILURE:
             return {
                 ...state,
                 isLoading: false,
                 hasError: true,
             };
+
         default:
             return { ...state };
     }

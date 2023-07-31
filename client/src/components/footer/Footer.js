@@ -15,7 +15,7 @@ export default function Footer() {
                 </Link>
             </div>
             <div className="footer--link">
-                <Link to={`/photowall/${userData.userId}`}>
+                <Link to={`/photowall/${userData.userId}/addpost`}>
                     <i className="ri-add-line footer--link__add"></i>
                 </Link>
             </div>

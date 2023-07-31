@@ -13,6 +13,7 @@ import "./profilefeedcard.scss";
 
 export default function ProfileFeedCard({ data, pictureId }) {
 
+	const comments = useSelector(state => state.profilePost.data.comments)
     const [showComments, setShowComments] = useState(() => {
 		document.body.style.overflow = "";
 		return false;
@@ -30,6 +31,7 @@ export default function ProfileFeedCard({ data, pictureId }) {
 
 	const profileUser = useSelector(state => state.profile.userData);
 	const formattedDate = getFormattedDate(new Date(data.createdAt))
+	const frontComment = comments.filter(comment => comment.post === pictureId)
 
     return (
 		<React.Fragment>
@@ -52,20 +54,30 @@ export default function ProfileFeedCard({ data, pictureId }) {
 						<CardDescription username={profileUser.username} description={data.description} />
 					</div>
 				)}
-                {/* <div className="card--bottom__comments">
-                    <div className="comment">
-                        <h3 className="comment--author">markus</h3>
-                        <p className="comment--content">
-                            Waves coming! &#9975;
-                        </p>
-                        <span className="comment--timestamp">1 hour ago</span>
-                    </div>
-                    <p className="comment--load">View all comments</p>
-                </div> */}
+                <div className="card--bottom__comments">
+					{
+						frontComment.length > 0 ? (
+							<React.Fragment>
+							<div className="frontcomment">
+								<h3 className="frontcomment--author">{frontComment[0].username}</h3>
+								<p className="frontcomment--text">
+								{frontComment[0].content}
+								</p>
+								<span className="frontcomment--timestamp">{formatTime(frontComment[0].createdAt)}</span>
+							</div>
+							<p className="comment--load" onClick={toggleComments}>View {frontComment.length === 1 ? "comment" : `all ${frontComment.length} comments`}</p>
+							</React.Fragment>
+
+						) : (
+							null
+						)
+					}
+
+                </div>
 				<span className='card--bottom__date'>{formattedDate}</span>
             </div>
         </div>
-		{showComments ? <CommentModal toggleComments={toggleComments} postId={data._id} /> : null}
+		{showComments ? <CommentModal toggleComments={toggleComments} postData={data} timestamp={formatTime(data.createdAt)} /> : null}
 		</React.Fragment>
 
     );
@@ -93,3 +105,22 @@ function getFormattedDate(rawDate){
 }
 
 
+const formatTime = (time) => {
+	let today = new Date();
+	let commentTime = new Date(time);
+	let formattedTimestamp = '';
+	if (today.getFullYear() > commentTime.getFullYear()) {
+		formattedTimestamp = `${today.getFullYear() - commentTime.getFullYear()} year ago`
+	} else if (today.getMonth() > commentTime.getMonth()){
+		formattedTimestamp = `${today.getMonth() - commentTime.getMonth()} months ago`
+	} else if (today.getDate() > commentTime.getDate()){
+		formattedTimestamp = `${today.getDate() - commentTime.getDate()} days ago`
+	} else if (today.getHours() > commentTime.getHours()){
+		formattedTimestamp = `${today.getHours() - commentTime.getHours()} hours ago`
+	} else if (today.getMinutes() > commentTime.getMinutes()){
+		formattedTimestamp = `${today.getMinutes() - commentTime.getMinutes()} minutes ago`
+	} else {
+		formattedTimestamp = "just now"
+	}
+	return formattedTimestamp
+}

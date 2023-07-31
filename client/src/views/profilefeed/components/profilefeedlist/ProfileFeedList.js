@@ -15,6 +15,10 @@ export default function ProfileFeedList() {
 			const elemToScoll = document.body.querySelector(`#pic-${itemToScroll}`)
 			if(elemToScoll){
 				elemToScoll.scrollIntoView({behavior: 'smooth'})
+				setTimeout(() => {
+					localStorage.removeItem("photowall-scroll")
+				}, 1000)
+
 			}
 		}
 	}, [picturesList])

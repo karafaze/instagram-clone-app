@@ -4,6 +4,7 @@ export const GET_PROFILE_POST = "GET_PROFILE_POST";
 export const GET_PROFILE_POST_DATA = "GET_PROFILE_POST_DATA";
 export const GET_PROFILE_POST_FAILURE = "GET_PROFILE_POST_FAILURE";
 export const UPDATE_PROFILE_POST_LIKE = "UPDATE_PROFILE_POST_LIKE";
+export const UPDATE_PROFILE_POST_COMMENT = "UPDATE_PROFILE_POST_COMMENT";
 
 export const getProfilePost = () => {
     return {
@@ -30,6 +31,15 @@ export const getProfilePostFailure = () => {
         type: GET_PROFILE_POST_FAILURE,
     };
 };
+
+export const updateProfilePostComment = (data) => {
+	return {
+		type: UPDATE_PROFILE_POST_COMMENT,
+		payload: data,
+	}
+}
+
+// fetch actions
 
 export function fetchProfilePostData(userId) {
     return async (dispatch) => {
@@ -118,4 +128,41 @@ export function removeLikeFromPost(userId, postId) {
             dispatch(getProfilePostFailure());
         }
     };
+}
+
+export function addNewComment(postId, comment) {
+	return async (dispatch) => {
+        try {
+            const items = getItemsFromLocalStorage();
+            if (!items.token) {
+                dispatch(getProfilePostFailure());
+                return;
+            }
+            const { token, userId } = items;
+			const payload = {
+				userId: userId,
+				comment: comment
+			}
+            const response = await fetch(`/comments/${postId}/add`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+            if (data.status === "OK") {
+				console.log(data.comment)
+				dispatch(updateProfilePostComment(data.comment))
+                // dispatch(updateProfilePostLike(data.data));
+                // dispatch(fetchProfilePostData(data.data.owner));
+            } else if (data.status === "FAILED") {
+				console.log(data.data)
+                dispatch(getProfilePostFailure());
+            }
+        } catch (err) {
+            dispatch(getProfilePostFailure());
+        }
+	}
 }

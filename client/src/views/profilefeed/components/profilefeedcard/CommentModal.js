@@ -1,11 +1,20 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addNewComment } from "../../../../redux/actions/profilePostAction";
+import CommentsList from "./CommentsList";
 
-export default function CommentModal({ toggleComments, postId }) {
+export default function CommentModal({ toggleComments, postData, timestamp }) {
 	const [commentText, setCommentText] = useState("")
 	const textRef = useRef();
 	const comments = useSelector(state => state.profilePost.data.comments)
+	const loggedUserData = useSelector(state => state.loggedUser.userData)
+	const profileUserData = useSelector(state => state.profile.userData)
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		textRef.current.focus()
+	}, [])
 
 	const handleEmojiClick = (e) => {
 		setCommentText(prevText => `${prevText}${e.target.childNodes[0].textContent}`)
@@ -14,10 +23,14 @@ export default function CommentModal({ toggleComments, postId }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(commentText)
-		setCommentText("")
+		if (commentText.length > 0){
+			dispatch(addNewComment(postData._id, commentText))
+			setCommentText("")
+		}
 	}
 
+	const postComment = comments.filter(comment => comment.post === postData._id)
+	console.log(postComment)
     return (
         <div className="comment-section">
             <div className="comment-section--top">
@@ -33,18 +46,32 @@ export default function CommentModal({ toggleComments, postId }) {
 					onClick={handleSubmit}
 				></i>
             </div>
-            <div className="comment-section--content">
-				{
-					comments.length > 0 ? (
-						<div> Comments</div>
-					) : (
-						<React.Fragment>
-							<p className="comment-section--content__empty-title">No comments on this post.</p>
-							<span className="comment-section--content__empty-subtitle">Start the conversation.</span>
-						</React.Fragment>
-					)
-				}
-			</div>
+			{
+				postData.description.length > 0 ? (
+					<div className="comment-section--author-title">
+						<img
+							className="comment-section--author-title__avatar"
+							src={profileUserData.avatarUrl}
+							alt="about user"
+						/>
+						<div className="comment-section--author-title__content">
+							<h3 className="comment-section--author-title__username">{profileUserData.username}<span className="comment-section--author-title__timestamp">{timestamp}</span></h3>
+							<p className="comment-section--author-title__text">{postData.description}</p>
+						</div>
+					</div>
+				) : null
+			}
+
+				{postComment.length > 0 ? (
+					<div className="comment-section--content">
+						<CommentsList comments={postComment}/>
+					</div>
+				) : (
+					<div className="comment-section--content__empty">
+							<p >No comments on this post.</p>
+							<span >Start a conversation.</span>
+					</div>
+				)}
             <div className="comment-section--edit">
 				<div className="comment-section--edit__emoji-insert">
 					<span onClick={handleEmojiClick}>&#x1F600;</span>
@@ -58,9 +85,16 @@ export default function CommentModal({ toggleComments, postId }) {
 				<form
 					className="comment-section--edit__form"
 				>
+					<div className="comment-section--edit__userpicture">
+						<img
+							src={loggedUserData.avatarUrl}
+							alt="belong_to_logged_user"
+						/>
+					</div>
 					<textarea
 						ref={textRef}
 						type="text"
+						placeholder="Add a new comment..."
 						className="comment-section--edit__input"
 						value={commentText}
 						onChange={(e) => setCommentText(e.target.value)}

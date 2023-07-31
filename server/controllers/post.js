@@ -1,5 +1,6 @@
 const Post = require("../models/post");
 const User = require('../models/user');
+const Comment = require('../models/comment');
 
 exports.createPost = (req, res) => {
     if (req.auth.userId !== req.params.userId) {
@@ -45,69 +46,62 @@ exports.createPost = (req, res) => {
 
 };
 
-exports.getAllPosts = (req, res) => {
-    Post.find({owner: req.params.userId})
-        .then(posts => {
-            if (!posts){
-                return res.status(400).json({
-                    status:'FAILED',
-                    message: 'No posts linked to this account'
-                })
-            }
-            const allUsersInLike = posts.map(post => {
-                return post.likes.map(like => like.user.toString())
-            }).flat()
+exports.getAllPosts = async(req, res) => {
+		// retrieve all posts from a specific user
+		const posts = await Post.find({owner: req.params.userId})
+		if (!posts){
+			return res.status(500).json({
+				status:'FAILED',
+				message:'No posts linked to this account'
+			})
+		}
 
-            let uniqueUsersIdInLike = [];
-            for (let userId of allUsersInLike){
-                if (!uniqueUsersIdInLike.includes(userId)){
-                    uniqueUsersIdInLike.push(userId)
-                }
-            }
-            if (uniqueUsersIdInLike.length > 0){
-                User.find({_id: {$in: uniqueUsersIdInLike}})
-                    .then(users => {
-                        let userLikeList = users.map(user => {
-                            return {
-                                username: user.username,
-                                avatarUrl: user.avatarUrl,
-                                userId: user._id.toString()
-                            }
-                        })
-                        const payload = {
-                            posts: formatPostListData(posts),
-                            likes: userLikeList,
-							comments: [],
-                        }
-                        return res.status(200).json({
-                            status: 'OK',
-                            data: payload
-                        })
-                    })
-                    .catch(err => {
-                        return res.status(500).json({
-                            status: 'FAILED',
-                            error: err.message
-                        })
-                    })
-            } else {
-                const payload = {
-                    posts: formatPostListData(posts),
-                    likes: [],
-					comments: [],
-                }
-                return res.status(200).json({
-                    status: 'OK',
-                    data: payload
-                })
-            }
-        })
-        .catch(err => {
-            return res.status(500).json({
-                status:'FAILED',
-                message: 'Error : ' + err
-            })
-        })
+		let allUsersInLike = []
+		// map array of posts and return all userId that liked a picture
+		allUsersInLike = posts.map(post => {
+			return post.likes.map(like => like.user.toString())
+		}).flat();
+
+		// reduce list to get only one userId per user
+		let uniqueUsersIdInLike = [];
+		for (let userId of allUsersInLike) {
+			if (!uniqueUsersIdInLike.includes(userId)) {
+				uniqueUsersIdInLike.push(userId)
+			}
+		}
+		// need to format usersLikeList
+		const users = await User.find({_id: {$in: uniqueUsersIdInLike}})
+
+		let userLikeList = users.map(user => {
+			return {
+				username: user.username,
+				avatarUrl: user.avatarUrl,
+				userId: user._id.toString()
+			}
+		})
+
+		// retrieve all post id from user
+		const allUserPostId = posts.map(post => post._id.toString())
+
+		// retrieve all comments from DB
+		const comments = await Comment.find()
+		// allComments should only contains comments that were linked to a post from user
+		let allComments = [];
+		// for each comment, if postId is in allUserPostId, we include it into allComments list
+		for (let comment of comments){
+			if (allUserPostId.includes(comment.post.toString())){
+				allComments.push(comment)
+			}
+		}
+
+		return res.status(200).json({
+			status: 'OK',
+			data: {
+				posts: formatPostListData(posts),
+				likes: userLikeList,
+				comments: allComments,
+			}
+		})
 }
 
 exports.addLikeToPost = async (req, res) => {

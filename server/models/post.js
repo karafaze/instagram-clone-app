@@ -17,10 +17,10 @@ const Post = new Schema(
             },
         }],
         comments: [{
-            user: {
+            comment: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
+                ref: "Comment",
+            }
          }],
         pictureUrl: { type: String, required: true },
     },
