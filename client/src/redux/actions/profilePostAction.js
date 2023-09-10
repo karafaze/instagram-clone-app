@@ -153,7 +153,7 @@ export function addNewComment(postId, comment) {
             });
             const data = await response.json();
             if (data.status === "OK") {
-				console.log(data.comment)
+				// console.log(data.comment)
 				dispatch(updateProfilePostComment(data.comment))
                 // dispatch(updateProfilePostLike(data.data));
                 // dispatch(fetchProfilePostData(data.data.owner));

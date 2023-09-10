@@ -22,7 +22,22 @@ export default function AddPost() {
         imageUrl: null,
     });
 
-	const [formError, setFormError] = useState({})
+	const [formError, setFormError] = useState({
+		title: {
+			hasError: false,
+			message: 'You need to add a title',
+			length: form.title.length,
+		},
+		description: {
+			hasError: false,
+			message: 'You description cannot exceed 250 characters',
+			length: form.description.length,
+		},
+		imageUrl: {
+			hasError: false,
+			message: 'You need to add an image to your post'
+		},
+	})
     const [preview, setPreview] = useState(null);
 
     // set form errors if any
@@ -46,6 +61,38 @@ export default function AddPost() {
         e.preventDefault();
         const { token, userId } = getItemsFromLocalStorage("photowall-user");
 		if (!form.imageUrl){
+			setFormError(prevForm => {
+				return {
+					...prevForm,
+					imageUrl: {
+						...prevForm.imageUrl,
+						hasError: true,
+					}
+				}
+			})
+			return;
+		} else if (form.title.length === 0){
+			setFormError(prevForm => {
+				return {
+					...prevForm,
+					title: {
+						...prevForm.title,
+						hasError: true,
+					}
+				}
+			})
+			return;
+		} else if (form.description.length > 255){
+			setFormError(prevForm => {
+				return {
+					...prevForm,
+					description: {
+						...prevForm.description,
+						hasError: true,
+					}
+				}
+
+			})
 			return;
 		}
 
@@ -62,12 +109,6 @@ export default function AddPost() {
             .then((result) => {
 				if (result.status === 'OK'){
 					return navigate(`/photowall/${authenticatedUserId}`)
-				}
-				if (result.errors) {
-					// console.log(result.errors)
-					// data.errors is an Array of error objects from the server
-					// we set formError using a function that format this data.errors Array
-					setFormError(formatErrorsToFormError(result.errors, form))
 				}
 			})
             .catch((err) => console.log(err));
@@ -127,6 +168,7 @@ export default function AddPost() {
                         handleFileClick={handleFileClick}
                         preview={preview}
                         hasPreview={preview ? true : false}
+						errors={formError.imageUrl.hasError ? formError.imageUrl : null}
                     />
                     <AddPostInput
                         id={"addpost-title"}
@@ -135,7 +177,7 @@ export default function AddPost() {
                         placeholder={"Title"}
                         value={form.title}
                         handleChange={handleChange}
-						errors={checkErrorInForm(formError, 'title')}
+						errors={formError.title.hasError ? formError.title : null}
                     />
                     <AddPostInput
                         id={"addpost-description"}
@@ -144,9 +186,8 @@ export default function AddPost() {
                         placeholder={"Share why this moment was unique"}
                         value={form.description}
                         handleChange={handleChange}
-						errors={checkErrorInForm(formError, 'description')}
+						errors={formError.description.hasError ? formError.title : null}
                     />
-
                 </form>
             </main>
             <Footer />
@@ -170,64 +211,30 @@ function addFieldsToFormData(currentForm, finalForm) {
     return finalForm;
 }
 
-function formatErrorsToFormError(errorsArray, currentFormData){
-    // we initialize an empty objects that will contain
-    // our new formError
-    // its shape will be an object with nested object within :
-    // {
-        // errorInputName1: {message: errorMessage, length: length of the input in formData},
-        // errorInputName2: {...},
-    //  }
-    let formError = {};
-    // we first iterate over the array of errors
-    for (let errorObject of errorsArray){
-        // retrieve the input name that contain the error
-        const inputErrorName = errorObject.param
-        // and create a new formatted error object
-        const updatedFormError = {
-            message: errorObject.msg,
-            length: currentFormData[inputErrorName].length
-        }
-        // and we add this new error to our formError object
-        formError[inputErrorName] = updatedFormError
-    }
-    // after iteration, we have a fully new formError object that we return
-    return formError;
-}
-
 function updateCurrentFormError(formError, formData){
     // we first create of copy of formError
     let formErrorCopy = {...formError}
-    // we first get a list of the keys in formError
-    let keyList = Object.keys(formErrorCopy)
-    if (keyList.length > 0){
-        // if it contains at least one error
-        // we update the key list to keep only the inputs that didn't change
-        // by comparing their length
-        // if the length has changed, it means the user has typed something else
-        keyList = keyList.filter(key => formData[key].length === formError[key].length)
-
-        // now that the list has been updated
-        // we iterate over the key of formErrorCopy
-        for (let key of Object.keys(formErrorCopy)){
-            // for each key
-            // if the key is not in the keyList from above
-            if (!keyList.includes(key)){
-                // we delete that key and its value from the errorFormCopy
-                delete formErrorCopy[key]
-            }
-        }
-        // now we have an object that contains only errors that
-        // haven't been modified since the user sent the form
-        // and received intel from the server
-        return formErrorCopy;
-    }
-    return formError;
-}
-
-function checkErrorInForm(formError, field){
-    // function to be used to send error message to FormInput.js
-    // we simply want to return either the errorMessage
-    // or null
-    return formError[field] || null
+	// iterate over the formError and check if there is still an error
+	// else change the hasError status to false
+	for (let [key, attr] of Object.entries(formError)){
+		if (key === 'title' && attr.hasError && formData.title.length > 0){
+			formErrorCopy.title = {
+				...formErrorCopy.title,
+				hasError: false,
+			}
+		}
+		if (key === 'imageUrl' && attr.hasError && formData.imageUrl){
+			formErrorCopy.imageUrl = {
+				...formErrorCopy.imageUrl,
+				hasError: false,
+			}
+		}
+		if (key === 'description' && attr.hasError && formData.description.length < 255){
+			formErrorCopy.description = {
+				...formErrorCopy.description,
+				hasError: false,
+			}
+		}
+	}
+    return formErrorCopy;
 }

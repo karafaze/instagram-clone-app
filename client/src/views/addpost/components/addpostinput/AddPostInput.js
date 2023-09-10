@@ -11,7 +11,6 @@ export default function AddPostInput({
     handleChange,
     errors,
 }) {
-    // console.log(errors)
     return (
         <React.Fragment>
             <div className="addpost-form--group">

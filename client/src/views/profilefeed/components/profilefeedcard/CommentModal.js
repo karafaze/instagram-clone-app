@@ -30,7 +30,7 @@ export default function CommentModal({ toggleComments, postData, timestamp }) {
 	}
 
 	const postComment = comments.filter(comment => comment.post === postData._id)
-	console.log(postComment)
+
     return (
         <div className="comment-section">
             <div className="comment-section--top">

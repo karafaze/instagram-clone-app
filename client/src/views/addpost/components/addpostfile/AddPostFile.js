@@ -7,6 +7,7 @@ export default function AddPostFile({
     handleFileClick,
     hasPreview,
     preview,
+	errors,
 }) {
     return (
         <React.Fragment>
@@ -40,6 +41,7 @@ export default function AddPostFile({
 					name="avatar"
 					style={{ display: "none" }}
 				/>
+			{errors && <span className="addpost-form--error">{errors.message}</span>}
 			</div>
         </React.Fragment>
     );

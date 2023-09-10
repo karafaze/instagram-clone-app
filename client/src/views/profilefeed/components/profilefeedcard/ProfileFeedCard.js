@@ -8,16 +8,28 @@ import CardComment from "./CardComment";
 import CardLikedByWrapper from "./CardLikedByWrapper";
 import CardDescription from './CardDescription';
 import CommentModal from './CommentModal';
+import LikesModal from './LikesModal';
 
 import "./profilefeedcard.scss";
 
 export default function ProfileFeedCard({ data, pictureId }) {
 
 	const comments = useSelector(state => state.profilePost.data.comments)
+	const allLikes = useSelector(state => state.profilePost.data.likes)
+
+	const sortedLikes = allLikes.filter(like => {
+		return data.likes.includes(like.userId)
+	})
+
     const [showComments, setShowComments] = useState(() => {
 		document.body.style.overflow = "";
 		return false;
 	});
+
+	const [showLikes, setShowLikes] = useState(() => {
+		document.body.style.overflow = "";
+		return false;
+	})
 
     const toggleComments = () => {
 		if (showComments) {
@@ -29,11 +41,21 @@ export default function ProfileFeedCard({ data, pictureId }) {
 		}
     };
 
+	const toggleLikes = () => {
+		if (showLikes) {
+			document.body.style.overflow = ""
+			setShowLikes(false)
+		} else if (!showComments){
+			setShowLikes(true)
+			document.body.style.overflow = "hidden"
+		}
+	}
+
 	const profileUser = useSelector(state => state.profile.userData);
 	const formattedDate = getFormattedDate(new Date(data.createdAt))
 	const frontComment = comments.filter(comment => comment.post === pictureId)
 
-    return (
+	return (
 		<React.Fragment>
         <div className="card" id={`pic-${pictureId}`}>
             <div className="card--content">
@@ -45,8 +67,8 @@ export default function ProfileFeedCard({ data, pictureId }) {
                     <CardComment toggleComments={toggleComments} />
                 </div>
                 {data.likes.length > 0 ? (
-                    <div className="card--bottom__likes">
-                        <CardLikedByWrapper likes={data.likes}/>
+                    <div className="card--bottom__likes" >
+                        <CardLikedByWrapper likes={data.likes} toggleLikes={toggleLikes}/>
                     </div>
                 ) : null}
 				{data.description && (
@@ -72,12 +94,13 @@ export default function ProfileFeedCard({ data, pictureId }) {
 							null
 						)
 					}
-
                 </div>
 				<span className='card--bottom__date'>{formattedDate}</span>
             </div>
         </div>
+		{showLikes ? <LikesModal toggleLikes={toggleLikes} likes={sortedLikes}/> : null}
 		{showComments ? <CommentModal toggleComments={toggleComments} postData={data} timestamp={formatTime(data.createdAt)} /> : null}
+
 		</React.Fragment>
 
     );

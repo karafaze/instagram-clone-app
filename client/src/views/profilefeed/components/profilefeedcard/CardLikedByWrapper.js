@@ -5,7 +5,7 @@ import CardLikedByOne from "./CardLikedByOne";
 import CardLikedByTwo from "./CardLikedByTwo";
 import CardLikedByMore from "./CardLikedByMore";
 
-export default function CardLikedByWrapper({ likes, users }) {
+export default function CardLikedByWrapper({ likes, toggleLikes }) {
 	// retrieve all user profiles that liked a picture from the current visited profile
     const userLikesInState = useSelector((state) => state.profilePost.data.likes);
 	// retrieve the loggedUserData
@@ -16,10 +16,10 @@ export default function CardLikedByWrapper({ likes, users }) {
     const userLikes = userLikesInState.filter(user => likes.includes(user.userId))
 
     if (userLikes.length === 1) {
-		return <CardLikedByOne likes={userLikes} loggedUserIn={loggedUserIn}/>
+		return <CardLikedByOne likes={userLikes} loggedUserIn={loggedUserIn} toggleLikes={toggleLikes}/>
     } else if (userLikes.length === 2) {
-		return <CardLikedByTwo likes={userLikes} loggedUserIn={loggedUserIn} loggedUser={loggedUser}/>
+		return <CardLikedByTwo likes={userLikes} loggedUserIn={loggedUserIn} loggedUser={loggedUser} toggleLikes={toggleLikes}/>
     } else {
-		return <CardLikedByMore likes={userLikes} loggedUserIn={loggedUserIn} loggedUser={loggedUser}/>
+		return <CardLikedByMore likes={userLikes} loggedUserIn={loggedUserIn} toggleLikes={toggleLikes}/>
     }
 }

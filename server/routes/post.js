@@ -3,7 +3,7 @@ const router = express.Router();
 const authentificationCheck = require("../middlewares/jwt-validator");
 const multer = require("../middlewares/multer");
 const postController = require("../controllers/post");
-const addPostSchema = require("../models/modelvalidation/addpost");
+// const addPostSchema = require("../models/modelvalidation/addpost");
 const validateUserInputs = require("../middlewares/signup-validator");
 
 // testing for postman
@@ -22,7 +22,7 @@ router.post(
     "/:userId",
     authentificationCheck,
     multer,
-    addPostSchema,
+    // addPostSchema,
     validateUserInputs,
     postController.createPost
 );

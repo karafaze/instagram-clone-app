@@ -167,7 +167,7 @@ function formatPostData(post) {
         description: post.description,
         owner: post.owner,
         likes: post.likes.map(id => id.user),
-        comments: post.comments.map(id => id.user),
+        comments: post.comments.map(id => id.comment.toString()),
         pictureUrl: post.pictureUrl,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt
