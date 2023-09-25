@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Comment = require('../models/comment');
+
 const path = require("path");
 const fs = require("fs");
 
@@ -79,84 +81,68 @@ exports.getFeedData = (req, res) => {
         })
 }
 
-exports.editUserProfile = (req, res) => {
-    // check if another user is trying to modify another account
-    if (req.auth.userId !== req.params.userId) {
-        return res.status(401).json({
-            status: "FAILED",
-            error: "Unauthorized request",
-        });
-    }
+// TO MODIFY
+exports.editUserProfile = async (req, res) => {
+	// check if another user is trying to modify another account
+	if (req.auth.userId !== req.params.userId) {
+		return res.status(401).json({
+			status: "FAILED",
+			error: "Unauthorized request",
+		});
+	}
+	// retrieve user from DB
+	const user = await User.findOne({_id: req.params.userId})
 
-    User.findOne({ _id: req.params.userId })
-        .then((user) => {
-            // initialize updates object to take in req.body key and values
-            let updates = {};
-            for (const key in req.body) {
-                updates[key] = req.body[key];
-            }
+	// initialize updates object to take in req.body key and values
+	let updates = {};
+	for (const key in req.body) {
+		updates[key] = req.body[key];
+	}
 
-            // if user sent a file to modify its profile picture
-            if (req.files.avatar) {
-                // we first initialize oldAvatarPath with value = null
-                let oldAvatarPath = null;
-                // now we check if the user is still using the picture by default assigned
-                // at the creation (in public/default) or if he's using a custom on (in public/uploads)
-                if (user.avatarUrl.includes("/uploads/")) {
-                    // if he's using a custom picture
-                    // we want to retrieve the full path of the current picture
-                    // to delete if with fs.unlink below
-                    oldAvatarPath = path.join(__dirname, "../public/uploads/");
-                    oldAvatarPath += user.avatarUrl.split("/uploads/")[1];
-                }
-                // we add to updates object the new avatarUrl for incoming picture
-                updates["avatarUrl"] = `${req.protocol}://${req.get(
-                    "host"
-                )}/uploads/${req.files.avatar[0].filename}`;
-                // below we update user with updates object and
-                // make sure we delete the previous picture from storage
-                User.findOneAndUpdate({ _id: req.params.userId }, updates)
-                    .then(() => {
-                        if (oldAvatarPath) {
-                            fs.unlink(oldAvatarPath, (err) => {
-                                if (err) console.log(err);
-                            });
-                        }
-                        return res.status(200).json({
-                            status: "OK",
-                            message: "Profile updated successfully",
-                        });
-                    })
-                    .catch((err) =>
-                        res.status(500).json({
-                            status: "FAILED",
-                            error: err.message,
-                        })
-                    );
-            } else {
-                // no picture was added, so we simply update user
-                User.findOneAndUpdate({ _id: req.params.userId }, updates)
-                    .then(() => {
-                        return res.status(200).json({
-                            status: "OK",
-                            message: "Profile updated successfully",
-                        });
-                    })
-                    .catch((err) =>
-                        res.status(500).json({
-                            status: "FAILED",
-                            error: err.message,
-                        })
-                    );
-            }
-        })
-        .catch((err) => {
-            res.status(500).json({
-                status: "FAILED",
-                error: err.message,
-            });
-        });
-};
+	// if file is sent, add it to updates object
+	if (req.files.avatar){
+		// we first initialize oldAvatarPath with value = null
+		let oldAvatarPath = null;
+		// we check if the user is still using the picture by default assigned
+		// at the creation (in public/default) or if he's using a custom on (in public/uploads)
+		if (user.avatarUrl.includes("/uploads/")) {
+			// if he's using a custom picture
+			// we want to retrieve the full path of the current picture
+			// to delete if with fs.unlink
+			oldAvatarPath = path.join(__dirname, "../public/uploads/");
+			oldAvatarPath += user.avatarUrl.split("/uploads/")[1];
+		}
+		const newAvatarUrl = `${req.protocol}://${req.get(
+			"host"
+		)}/uploads/${req.files.avatar[0].filename}`
+		// we add to updates object the new avatarUrl for incoming picture
+		updates["avatarUrl"] = newAvatarUrl;
+	}
+
+	try {
+		// update user in DB
+		const updatedUser = await User.findOneAndUpdate({_id: req.params.userId}, updates, {new: true})
+		// iterate through user comments, and modify its avatar_url and username, then save to DB
+		const comments = await Comment.find({owner: req.params.userId});
+		if (comments.length > 0){
+			for (const comment of comments){
+				comment.username = updatedUser.username;
+				comment.avatarUrl = updatedUser.avatarUrl;
+				await comment.save()
+			}
+		}
+		// return ok status
+		return res.status(200).json({
+			status: "OK",
+			message: "Profile updated successfully",
+		});
+	} catch(err){
+		return res.status(500).json({
+			status:'FAILED',
+			error: err.message
+		})
+	}
+}
 
 exports.addFollow = async (req, res) => {
     // retrieve parameters from req.body

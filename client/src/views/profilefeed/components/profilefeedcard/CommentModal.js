@@ -11,7 +11,6 @@ export default function CommentModal({ toggleComments, postData, timestamp }) {
 	const loggedUserData = useSelector(state => state.loggedUser.userData)
 	const profileUserData = useSelector(state => state.profile.userData)
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		textRef.current.focus()
 	}, [])

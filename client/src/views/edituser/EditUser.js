@@ -18,7 +18,7 @@ export default function EditUser() {
 
     // preview state in case user is changing photos
     const [preview, setPreview] = useState(null)
-    // form data 
+    // form data
     const [form, setForm] = useState({
         username: "",
         bio: "",
@@ -104,7 +104,7 @@ export default function EditUser() {
         let formData = new FormData();
         formData = addFieldsToFormData(form, userDetail, formData)
 
-        
+
         if ((!formData.has('username') &&
             !formData.has('bio') &&
             !formData.has('avatar'))){
@@ -122,8 +122,8 @@ export default function EditUser() {
                 .then((res) => res.json())
                 .then((result) => {
                     if (result.status === 'OK'){
-                        // update was successfull, 
-                        // we fetch loggeduserdetails to get updated profile 
+                        // update was successfull,
+                        // we fetch loggeduserdetails to get updated profile
                         // and we send the user back to the previous page
                         dispatch(fetchLoggedUserDetails(userId))
                         return navigate(-1)
@@ -153,13 +153,13 @@ export default function EditUser() {
                 <main className="edituserprofile">
                     <div className="edituserprofile--top">
                         <span
-                            onClick={() => navigate(-1)} 
+                            onClick={() => navigate(-1)}
                             className="edituserprofile--top__back"
                             >
                                 Cancel
                         </span>
                         <h1 className="edituserprofile--top__title">Edit profile</h1>
-                        <button 
+                        <button
                             className="edituserprofile--top__btn"
                             onClick={handleSubmit}
                         >
@@ -168,7 +168,7 @@ export default function EditUser() {
                     </div>
                     <section className="edituserprofile--main">
                         <form className="edituser-form">
-                            <EditFormFile 
+                            <EditFormFile
                                 isLoading={!userDetail ? true : false}
                                 avatarUrl={userDetail ? userDetail.avatarUrl : ''}
                                 hasPreview={preview ? true : false}
@@ -220,7 +220,7 @@ function addFieldsToFormData(currentForm, userDetail, finalForm){
             if (value) {
                 console.log(value)
                 finalForm.append('avatar', value)
-            }; 
+            };
         }
 
     }
@@ -230,8 +230,8 @@ function addFieldsToFormData(currentForm, userDetail, finalForm){
 function formatErrorsToFormError(errorsArray, currentFormData){
     // we initialize an empty objects that will contain
     // our new formError
-    // its shape will be an object with nested object within : 
-    // { 
+    // its shape will be an object with nested object within :
+    // {
         // errorInputName1: {message: errorMessage, length: length of the input in formData},
         // errorInputName2: {...},
     //  }
@@ -240,7 +240,7 @@ function formatErrorsToFormError(errorsArray, currentFormData){
     for (let errorObject of errorsArray){
         // retrieve the input name that contain the error
         const inputErrorName = errorObject.param
-        // and create a new formatted error object 
+        // and create a new formatted error object
         const updatedFormError = {
             message: errorObject.msg,
             length: currentFormData[inputErrorName].length
@@ -253,7 +253,7 @@ function formatErrorsToFormError(errorsArray, currentFormData){
 }
 
 function updateCurrentFormError(formError, formData){
-    // we first create of copy of formError 
+    // we first create of copy of formError
     let formErrorCopy = {...formError}
     // we first get a list of the keys in formError
     let keyList = Object.keys(formErrorCopy)
@@ -264,7 +264,7 @@ function updateCurrentFormError(formError, formData){
         // if the length has changed, it means the user has typed something else
         keyList = keyList.filter(key => formData[key].length === formError[key].length)
 
-        // now that the list has been updated 
+        // now that the list has been updated
         // we iterate over the key of formErrorCopy
         for (let key of Object.keys(formErrorCopy)){
             // for each key
@@ -274,8 +274,8 @@ function updateCurrentFormError(formError, formData){
                 delete formErrorCopy[key]
             }
         }
-        // now we have an object that contains only errors that 
-        // haven't been modified since the user sent the form 
+        // now we have an object that contains only errors that
+        // haven't been modified since the user sent the form
         // and received intel from the server
         return formErrorCopy;
     }

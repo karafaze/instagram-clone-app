@@ -1,17 +1,21 @@
 import React from "react";
+import {Link } from 'react-router-dom';
 
 export default function CommentsList({ comments }) {
     const renderComments = comments.map((comment) => {
 		const timestamp = formatTime(comment.createdAt)
         return (
             <div key={comment._id} className="comment">
-				<img
-					className="comment--avatar"
-					src={comment.avatarUrl}
-					alt="about user"
-				/>
+				<Link to={`/photowall/${comment.owner}`} className="comment--avatar">
+					<img
+
+						src={comment.avatarUrl}
+						alt="about user"
+					/>
+				</Link>
+
 				<div className="comment--content">
-                	<h3 className="comment--content__author">{comment.username} <span className="comment--content__timestamp">{timestamp}</span></h3>
+                	<h3 className="comment--content__author"><Link to={`/photowall/${comment.owner}`}>{comment.username} </Link><span className="comment--content__timestamp">{timestamp}</span></h3>
                 	<p className="comment--content__text">{comment.content}</p>
 				</div>
             </div>
